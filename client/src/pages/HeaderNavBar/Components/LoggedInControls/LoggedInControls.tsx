@@ -1,18 +1,21 @@
 //Icons
 import { Person, ShoppingCart } from '@material-ui/icons';
 
+//Components
+import ControlButton from '../ControlButton/ControlButton';
+
 //Styles
 import './LoggedInControls.css'
 
 //Component
 function LoggedInControls() {
     return <div id="controls">
-        <button id="profile-button" className="control-button">
+        <ControlButton id="profile-button">
             <Person/>
-        </button>
-        <button id="cart-button" className="control-button">
+        </ControlButton>
+        <ControlButton id="cart-button">
             <ShoppingCart/>
-        </button>
+        </ControlButton>
     </div>
 }
 

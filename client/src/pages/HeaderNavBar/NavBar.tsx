@@ -2,9 +2,10 @@
 import config from '../../config';
 
 //Components
-import LoggedOutControls from './LoggedOutControls/LoggedOutControls';
-import LoggedInControls from './LoggedInControls/LoggedInControls';
+import LoggedOutControls from './Components/LoggedOutControls/LoggedOutControls';
+import LoggedInControls from './Components/LoggedInControls/LoggedInControls';
 import { Menu } from '@material-ui/icons';
+import ControlButton from './Components/ControlButton/ControlButton';
 
 //Styles
 import './NavBar.css'
@@ -14,9 +15,9 @@ function NavBar() {
 
     return (
         <div id="header-nav">
-            <button id="menu-toggle" className="control-button">
+            <ControlButton id="menu-toggle">
                 <Menu/>
-            </button>
+            </ControlButton>
             <a href="/">
                 <h1 id="app-name">{config.APP_NAME}</h1>
             </a>
