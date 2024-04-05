@@ -20,6 +20,8 @@ class RouterController:
             {"Router": TestRouter, "Parent": ApiRouter},
         ]
 
+        print("\t[[Loading Routers:")
+
         for RouterData in RunOrder:
             Router = RouterData.get("Router")
             print(f"\tLoading Router '{Router.RouteName}'.")
@@ -28,6 +30,8 @@ class RouterController:
                 continue
             Blueprint = Router.Init(App, RouterController)
             RouterController.Routers[Router.RouteName] = Blueprint
+
+        print("\n\t[[Registering Routers:")
 
         #Registering blueprints
         for RouterData in reversed(RunOrder):
@@ -39,7 +43,7 @@ class RouterController:
             else:
                 ParentBlueprint = RouterController.Routers.get(Parent.RouteName)
                 ParentBlueprint.register_blueprint(Blueprint)
-            print(f"\tRouter '{Router.RouteName}' loaded.")
+            print(f"\tRouter '{Router.RouteName}' registered.")
         
         print("RouterController Successfully Started.\n")
             

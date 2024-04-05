@@ -1,0 +1,34 @@
+#controls {
+    width: 200px;
+    height: 100%;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#controls > button {
+    width: 45%;
+    height: 80%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#controls > button::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+    height: 2px;
+    width: 0px;
+    opacity: 0;
+    bottom: 5px;
+    border-radius: 20px;
+    transition: opacity .3s ease, width .3s ease;
+}
+
+#controls > button:hover::after {
+    opacity: 1;
+    width: 60px;
+}

@@ -1,0 +1,35 @@
+:root {
+    --main-color: #212121;
+    --secondary-color: #414141;
+    --font-family: Arial, sans-serif;
+    --font-size: 16px;
+    --font-weight: normal;
+}
+
+* {
+
+    /* Font */
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    color: white;
+
+}
+
+body {
+    margin: 0;
+    background-color: white;
+}
+
+button {
+    background: none;
+    border: none;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}

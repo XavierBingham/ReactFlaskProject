@@ -1,5 +1,9 @@
+//Imports
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+
+//Components
+import NavBar from '../HeaderNavBar/NavBar';
 
 type UserData = {
   id: number,
@@ -10,7 +14,7 @@ type UserData = {
 function App() {
 
   let [data, updateData]:[UserData[], any] = useState([]);
-
+  
   const getData = async () => {
     await axios.get("/api/test")
     .then((res) => {
@@ -28,6 +32,7 @@ function App() {
 
   return (
     <div>
+      <NavBar/>
       {data !== undefined ? (
         <div>
           {data.map(user => (
