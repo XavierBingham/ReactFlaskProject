@@ -2,6 +2,10 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
+//Styles
+import '../../styles/Global.css';
+import '../../styles/GlobalAnimations.css';
+
 //Components
 import NavBar from '../HeaderNavBar/NavBar';
 
@@ -13,6 +17,7 @@ type UserData = {
 
 function App() {
 
+  /*
   let [data, updateData]:[UserData[], any] = useState([]);
   
   const getData = async () => {
@@ -29,23 +34,11 @@ function App() {
   useEffect(() => {
     getData();
   }, []);
+  */
 
   return (
     <div>
       <NavBar/>
-      {data !== undefined ? (
-        <div>
-          {data.map(user => (
-            <li key={user.id}>
-              {user.firstName} {user.lastName}
-            </li>
-          ))}
-        </div>
-      ) : (
-        <div>
-          Loading...
-        </div>
-      )}
     </div>
   );
 

@@ -1,5 +1,5 @@
 //Icons
-import { Person, ShoppingCart } from '@material-ui/icons';
+import { Person, ShoppingCart } from '@mui/icons-material';
 
 //Components
 import ControlButton from '../ControlButton/ControlButton';
