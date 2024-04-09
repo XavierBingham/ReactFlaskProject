@@ -8,10 +8,10 @@ import { Menu } from '@mui/icons-material';
 import ControlButton from './Components/ControlButton/ControlButton';
 
 //Styles
-import './NavBar.css'
+import './TopNavBar.css'
 
 //Component
-function NavBar() {
+function TopNavBar() {
 
     return (
         <div id="header-nav">
@@ -27,4 +27,4 @@ function NavBar() {
 
 }
 
-export default NavBar
+export default TopNavBar;

@@ -1,0 +1,8 @@
+#side-nav {
+    background-color: var(--secondary-color);
+    height: 100%;
+    width: 200px;
+    border-right: 1px solid var(--secondary-color-darker);
+    position: fixed;
+    z-index: 1;
+}
