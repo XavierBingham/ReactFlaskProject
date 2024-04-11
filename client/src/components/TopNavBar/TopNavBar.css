@@ -11,7 +11,7 @@
     padding-right: 10px;
     box-sizing: border-box;
     justify-content: space-between;
-    z-index: 2;
+    z-index: 3;
     position: fixed;
 }
 

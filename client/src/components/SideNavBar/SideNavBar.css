@@ -1,8 +1,29 @@
 #side-nav {
-    background-color: var(--secondary-color);
+    background-color: white;
     height: 100%;
     width: 200px;
-    border-right: 1px solid var(--secondary-color-darker);
+    box-shadow: 3px 0px 4px rgba(0, 0, 0, 0.155);
     position: fixed;
     z-index: 1;
+    margin-top: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#side-nav-bg {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    position: absolute;
+}
+
+#side-nav::before {
+    content: '';
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.271);
+    z-index: -1;
+    left: 0;
 }

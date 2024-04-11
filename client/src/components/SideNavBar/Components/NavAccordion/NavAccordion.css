@@ -1,0 +1,20 @@
+.MuiAccordion-root {
+    width: 100%;
+    background-color: transparent;
+    margin: 0px;
+}
+
+.MuiPaper-root {
+    margin: 0px !important;
+    box-shadow: none !important;
+}
+
+.MuiAccordionDetails-root {
+    color: var(--main-color);
+    text-align: center;
+}
+
+.MuiAccordionSummary-content {
+    color: var(--main-color);
+    text-align: center;
+}

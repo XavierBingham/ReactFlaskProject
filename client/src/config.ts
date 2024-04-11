@@ -24,6 +24,4 @@ const Config = {
     }
 }
 
-module.exports = {
-    Config: Config,
-};
+export default Config;
