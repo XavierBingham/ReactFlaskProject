@@ -9,6 +9,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    left: -210px;
+    transition: left .25s ease;
 }
 
 #side-nav-bg {
@@ -23,7 +25,18 @@
     position: fixed;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.271);
+    background-color: transparent;
+    pointer-events: none;
     z-index: -1;
+    left: 0;
+    transition: background-color .5s ease;
+}
+
+#side-nav.enabled::before {
+    background-color: rgba(0, 0, 0, 0.271);
+    pointer-events: auto;
+}
+
+#side-nav.enabled {
     left: 0;
 }

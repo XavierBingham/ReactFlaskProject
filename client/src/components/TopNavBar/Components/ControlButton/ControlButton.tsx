@@ -3,11 +3,14 @@ import { useState } from 'react';
 import './ControlButton.css'
 
 //Component
-function ControlButton({children, id}:{children:any, id:string}) {
+function ControlButton({children, id, handleClick}:{children:any, id:string, handleClick?:(event:React.MouseEvent<HTMLButtonElement>)=>void}) {
 
     const [clicked, setClicked] = useState(false);
 
-    const onClick = () => {
+    const onClick = (event:React.MouseEvent<HTMLButtonElement>) => {
+        if(handleClick){
+            handleClick(event);
+        }
         if(clicked){return;}
         setClicked(true);
         setTimeout(() => {

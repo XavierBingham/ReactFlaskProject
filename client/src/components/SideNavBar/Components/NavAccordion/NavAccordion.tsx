@@ -1,23 +1,36 @@
 //Imports
-import { Accordion, AccordionSummary, AccordionDetails, AccordionActions } from '@mui/material';
+import { Accordion, AccordionProps, AccordionSummary, AccordionDetails, AccordionActions, styled } from '@mui/material';
 
 //Styles
 import './NavAccordion.css';
+
+//Components
+const CustomAccordion = styled((props:AccordionProps) => (
+    <Accordion 
+        disableGutters
+        square
+        slotProps={{
+            transition:{unmountOnExit: true},
+        }}
+        {...props}
+    />
+))(({theme}) => ({
+    border: 'none',
+    borderBottom: 'none',
+}));
 
 //Component
 function NavAccordion() {
 
     return (
-        <Accordion slotProps={{
-            transition: {unmountOnExit: true},
-        }}>
+        <CustomAccordion>
             <AccordionSummary id="test1" aria-controls="panel-content">
                 Test2
             </AccordionSummary>
             <AccordionDetails>
                 Some details1
             </AccordionDetails>
-        </Accordion>
+        </CustomAccordion>
     );
 
 }

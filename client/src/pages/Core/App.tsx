@@ -8,7 +8,6 @@ import '../../styles/GlobalAnimations.css';
 
 //Components
 import TopNavBar from '../../components/TopNavBar/TopNavBar';
-import SideNavBar from '../../components/SideNavBar/SideNavBar';
 
 type UserData = {
   id: number,
@@ -39,7 +38,6 @@ function App() {
 
   return (
     <div>
-      <SideNavBar/>
       <TopNavBar/>
     </div>
   );
