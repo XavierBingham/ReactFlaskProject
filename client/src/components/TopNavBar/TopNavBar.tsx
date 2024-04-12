@@ -54,7 +54,7 @@ function TopNavBar() {
                 </a>
                 <LoggedInControls/>
             </div>
-            <SideNavBar ref={sideNavBarRef} enabled={sideNavOpen}/>
+            <SideNavBar ref={sideNavBarRef} enabled={sideNavOpen} />
         </div>
     )
 
