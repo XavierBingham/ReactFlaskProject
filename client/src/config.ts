@@ -1,16 +1,7 @@
 const Config = {
     APP_NAME: "App Test",
     PRODUCT_NAV_OPTIONS: {
-        ["Clothing"]: {
-            ["Shop All Clothing"]: "/",
-            ["Womens"]: {
-                ["New Arrivals"]: "/",
-                ["T-Shirts & Tops"]: "/",
-                ["Hoodies & Jacket"]: "/",
-                ["Pants & Shorts"]: "/",
-                ["Dresses & Skirts"]: "/",
-                ["Shop All Clothing"]: "/",
-            },
+        ENTRIES: {
             ["Mens"]: {
                 ["New Arrivals"]: "/",
                 ["T-Shirts & Tops"]: "/",
@@ -19,6 +10,16 @@ const Config = {
                 ["Dresses & Skirts"]: "/",
                 ["Shop All Clothing"]: "/",
             },
+            ["Womens"]: {
+                ["New Arrivals"]: "/",
+                ["T-Shirts & Tops"]: "/",
+                ["Hoodies & Jacket"]: "/",
+                ["Pants & Shorts"]: "/",
+                ["Dresses & Skirts"]: "/",
+                ["Shop All Clothing"]: "/",
+            },
+        },
+        SINGLE_ENTRIES: {
             ["Featured"]: "/",
         },
     }

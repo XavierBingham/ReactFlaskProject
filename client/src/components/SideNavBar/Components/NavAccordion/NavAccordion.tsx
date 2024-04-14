@@ -47,28 +47,27 @@ const CustomDetails = styled((props:AccordionDetailsProps) => (
 }));
 
 //Component
-function NavAccordion({id, expandedId, onChange}:{id:string, expandedId:string|undefined, onChange:(id:string)=>any}) {
+export function NavLink({category, link}:{category:string, link:string}) {
+
+    return (
+        <CustomDetails>
+            {category}
+        </CustomDetails>
+    )
+
+}
+
+export function NavAccordion({id, expandedId, onChange, category, subCategories}:{id:string, expandedId:string|undefined, onChange:(id:string)=>any, category:string, subCategories:{[subCategory:string]:string}}) {
 
     return (
         <CustomAccordion expanded={id === expandedId} onChange={onChange(id)}>
             <CustomSummary id={id} aria-controls="panel-content">
-                Category Title
+                {category}
             </CustomSummary>
-            <CustomDetails>
-                Sub Category
-            </CustomDetails>
-            <CustomDetails>
-                Sub Category
-            </CustomDetails>
-            <CustomDetails>
-                Sub Category
-            </CustomDetails>
-            <CustomDetails>
-                Sub Category
-            </CustomDetails>
+            {Object.entries(subCategories).map(([subCategory,redirect]) => (
+                <NavLink category={subCategory} link={redirect}/>
+            ))}
         </CustomAccordion>
     );
 
 }
-
-export default NavAccordion;

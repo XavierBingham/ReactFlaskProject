@@ -1,9 +1,10 @@
 //Imports
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { forwardRef, ForwardedRef, useRef, useState, useEffect } from 'react';
+import Config from '../../config';
 
 //Components
-import NavAccordion from './Components/NavAccordion/NavAccordion';
+import { NavAccordion, NavLink } from './Components/NavAccordion/NavAccordion';
 
 //Styles
 import './SideNavBar.css';
@@ -35,9 +36,12 @@ const SideNavBar = forwardRef((props:{enabled:boolean}, ref:ForwardedRef<HTMLDiv
     return (
         <div id="side-nav" className={`${enabled?"enabled":"disabled"}`}>
             <div ref={ref} id="side-nav-bg">
-                <NavAccordion id="test1" expandedId={expandedId} onChange={expandSection}/>
-                <NavAccordion id="test2" expandedId={expandedId} onChange={expandSection}/>
-                <NavAccordion id="test3" expandedId={expandedId} onChange={expandSection}/>
+                {Object.entries(Config.PRODUCT_NAV_OPTIONS.ENTRIES).map(([category, subCategories]) => (
+                    <NavAccordion id={`accordion-${category}`} expandedId={expandedId} onChange={expandSection} category={category} subCategories={subCategories}/>
+                ))}
+                {Object.entries(Config.PRODUCT_NAV_OPTIONS.SINGLE_ENTRIES).map(([category, link]) => (
+                    <NavLink category={category} link = {link}/>
+                ))}
             </div>
         </div>
     );
