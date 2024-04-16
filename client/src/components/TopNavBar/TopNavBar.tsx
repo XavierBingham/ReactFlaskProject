@@ -8,6 +8,7 @@ import LoggedInControls from './Components/LoggedInControls/LoggedInControls';
 import { Menu } from '@mui/icons-material';
 import ControlButton from './Components/ControlButton/ControlButton';
 import SideNavBar from '../SideNavBar/SideNavBar';
+import { Link } from 'react-router-dom';
 
 //Styles
 import './TopNavBar.css'
@@ -46,12 +47,12 @@ function TopNavBar() {
     return (
         <div id="nav">
             <div id="header-nav">
-                <ControlButton id="menu-toggle" handleClick={toggleSideNav}>
+                <ControlButton id="menu-toggle" title="Navigate" handleClick={toggleSideNav}>
                     <Menu/>
                 </ControlButton>
-                <a href="/">
+                <Link to="/">
                     <h1 id="app-name">{config.APP_NAME}</h1>
-                </a>
+                </Link>
                 <LoggedInControls/>
             </div>
             <SideNavBar ref={sideNavBarRef} enabled={sideNavOpen} />

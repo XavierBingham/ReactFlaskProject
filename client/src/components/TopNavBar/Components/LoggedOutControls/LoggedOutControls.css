@@ -1,13 +1,12 @@
 #controls {
     width: 200px;
     height: 100%;
-    margin-left: auto;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
 }
 
-#controls > button {
+#controls > a {
     width: 45%;
     height: 80%;
     position: relative;
@@ -16,7 +15,7 @@
     align-items: center;
 }
 
-#controls > button::after {
+#controls > a::after {
     content: '';
     position: absolute;
     background-color: white;
@@ -28,7 +27,7 @@
     transition: opacity .3s ease, width .3s ease;
 }
 
-#controls > button:hover::after {
+#controls > a:hover::after {
     opacity: 1;
     width: 60px;
 }

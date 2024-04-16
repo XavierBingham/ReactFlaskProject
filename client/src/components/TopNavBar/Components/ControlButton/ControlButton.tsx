@@ -1,9 +1,36 @@
-//Styles
+//Imports
 import { useState } from 'react';
+import { Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
+import styled from '@emotion/styled';
+
+//Styles
 import './ControlButton.css'
 
+//Components
+const CustomTooltip = styled((props:TooltipProps) => (
+    <Tooltip
+        placement="bottom"
+        slotProps={{
+            popper: {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [0, 8],
+                    },
+                }]
+            }
+        }}
+        {...props}
+    />
+))(({theme}) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: "white",
+        color: "black",
+    },
+}));
+
 //Component
-function ControlButton({children, id, handleClick}:{children:any, id:string, handleClick?:(event:React.MouseEvent<HTMLButtonElement>)=>void}) {
+function ControlButton({children, id, title, handleClick}:{children:any, id:string, title:string, handleClick?:(event:React.MouseEvent<HTMLButtonElement>)=>void}) {
 
     const [clicked, setClicked] = useState(false);
 
@@ -19,9 +46,11 @@ function ControlButton({children, id, handleClick}:{children:any, id:string, han
     }
 
     return (
-        <button id={id} className={`control-button ${clicked ? 'animate' : ''}`} onClick={onClick}>
-            {children}
-        </button>
+        <CustomTooltip title={`${title}`}>
+            <button id={id} className={`control-button ${clicked ? 'animate' : ''}`} onClick={onClick}>
+                {children}
+            </button>
+        </CustomTooltip>
     )
 
 }
