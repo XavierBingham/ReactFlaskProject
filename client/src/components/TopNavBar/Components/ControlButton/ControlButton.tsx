@@ -1,14 +1,14 @@
 //Imports
 import { useState } from 'react';
-import { Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
-import styled from '@emotion/styled';
+import { Tooltip, TooltipProps, tooltipClasses, styled } from '@mui/material';
 
 //Styles
 import './ControlButton.css'
 
 //Components
-const CustomTooltip = styled((props:TooltipProps) => (
+const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
     <Tooltip
+        classes={{popper:className}}
         placement="bottom"
         slotProps={{
             popper: {
@@ -25,7 +25,8 @@ const CustomTooltip = styled((props:TooltipProps) => (
 ))(({theme}) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         backgroundColor: "white",
-        color: "black",
+        color: "var(--main-color)",
+        boxShadow: "0px 1px 2px var(--main-color)",
     },
 }));
 
