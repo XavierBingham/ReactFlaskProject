@@ -1,5 +1,5 @@
 //Imports
-import { useState } from 'react';
+import { ForwardedRef, forwardRef, useState } from 'react';
 import { Tooltip, TooltipProps, tooltipClasses, styled } from '@mui/material';
 
 //Styles
@@ -25,19 +25,22 @@ const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
 ))(({theme}) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         backgroundColor: "white",
-        color: "var(--main-color)",
+        color: "var(--main-color-lighter)",
         boxShadow: "0px 1px 2px var(--main-color)",
+        fontWeight: "bold",
     },
 }));
 
 //Component
-function ControlButton({children, id, title, handleClick}:{children:any, id:string, title:string, handleClick?:(event:React.MouseEvent<HTMLButtonElement>)=>void}) {
+const ControlButton = forwardRef((props:{children:any, id:string, title:string, handleClick?:(event:React.MouseEvent<HTMLButtonElement>)=>void}, ref:ForwardedRef<HTMLButtonElement>) => {
 
+    //State
     const [clicked, setClicked] = useState(false);
 
+    //Methods
     const onClick = (event:React.MouseEvent<HTMLButtonElement>) => {
-        if(handleClick){
-            handleClick(event);
+        if(props.handleClick){
+            props.handleClick(event);
         }
         if(clicked){return;}
         setClicked(true);
@@ -46,14 +49,15 @@ function ControlButton({children, id, title, handleClick}:{children:any, id:stri
         }, 250);
     }
 
+    //Component
     return (
-        <CustomTooltip title={`${title}`}>
-            <button id={id} className={`control-button ${clicked ? 'animate' : ''}`} onClick={onClick}>
-                {children}
+        <CustomTooltip title={`${props.title}`}>
+            <button ref={ref} id={props.id} className={`control-button ${clicked ? 'animate' : ''}`} onClick={onClick}>
+                {props.children}
             </button>
         </CustomTooltip>
     )
 
-}
+});
 
 export default ControlButton;

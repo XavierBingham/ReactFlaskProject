@@ -1,6 +1,7 @@
 :root {
     --main-color: #212121;
-    --main-color: #181818;
+    --main-color-darker: #181818;
+    --main-color-lighter: #2f2f2f;
     --secondary-color: #414141;
     --secondary-color-darker: #272727;
     --font-family: Arial, sans-serif;
