@@ -38,21 +38,28 @@ const CustomSummary = styled((props:AccordionSummaryProps) => (
     },
 }));
 
-const CustomDetails = styled((props:AccordionDetailsProps) => (
+interface CustomDetailProps extends AccordionDetailsProps {
+    rootCategory: boolean,
+}
+
+const CustomDetails = styled((props:CustomDetailProps) => (
     <AccordionDetails
         {...props}
     />
-))(({theme}) => ({
+))(({theme, rootCategory}) => ({
     color: 'var(--main-color)',
+    fontWeight: rootCategory ? 'bold' : 'normal',
 }));
 
 //Component
-export function NavLink({category, link}:{category:string, link:string}) {
+export function NavLink({category, link, rootCategory=false}:{category:string, link:string, rootCategory?:boolean}) {
 
     return (
-        <CustomDetails>
-            {category}
-        </CustomDetails>
+        <a href={link} className="nav-redirect">
+            <CustomDetails rootCategory={rootCategory}>
+                {category}
+            </CustomDetails>
+        </a>
     )
 
 }

@@ -40,7 +40,7 @@ const SideNavBar = forwardRef((props:{enabled:boolean}, ref:ForwardedRef<HTMLDiv
                     <NavAccordion id={`accordion-${category}`} expandedId={expandedId} onChange={expandSection} category={category} subCategories={subCategories}/>
                 ))}
                 {Object.entries(Config.PRODUCT_NAV_OPTIONS.SINGLE_ENTRIES).map(([category, link]) => (
-                    <NavLink category={category} link = {link}/>
+                    <NavLink category={category} link = {link} rootCategory={true}/>
                 ))}
             </div>
         </div>

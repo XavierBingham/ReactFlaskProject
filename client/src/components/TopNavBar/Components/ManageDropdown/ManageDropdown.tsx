@@ -16,7 +16,7 @@ export default function ManageDropdown({open, onClose, anchorEl}:props) {
     //Component
     return (
         <Menu
-            open={true}
+            open={false}
             TransitionComponent={Fade}
             onClose={onClose}
             anchorEl={anchorEl}
