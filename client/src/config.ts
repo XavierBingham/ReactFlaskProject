@@ -1,5 +1,5 @@
 const Config = {
-    APP_NAME: "App Test",
+    APP_NAME: "Generic Brand",
     PRODUCT_NAV_OPTIONS: {
         ENTRIES: {
             ["Mens"]: {

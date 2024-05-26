@@ -22,7 +22,7 @@ function LoggedInControls() {
     };
 
     //Component
-    return <div id="controls">
+    return <div id="logged-in-controls" className="account-controls">
 
         <ControlButton
             id="profile-button"

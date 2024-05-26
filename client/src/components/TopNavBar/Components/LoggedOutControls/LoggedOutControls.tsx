@@ -7,7 +7,7 @@ import './LoggedOutControls.css'
 //Component
 function LoggedOutControls() {
 
-    return (<div id="controls">
+    return (<div id="logged-out-controls" className="account-controls">
         <Link to="/signup">Sign Up</Link>
         <Link to="/login">Login</Link>
     </div>)

@@ -2,6 +2,8 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { DataContext, DataWrapper } from './DataContext';
+import AccountManager from './DataModules/AccountManager';
 
 //Styles
 import '../../styles/Global.css';
@@ -14,6 +16,7 @@ import ProductSearch from '../../components/ProductSearch/ProductSearch';
 import Cart from '../../components/Cart/Cart';
 import Checkout from '../../components/Checkout/Checkout';
 import AccountCreate from '../../components/AccountCreate/AccountCreate';
+import CacheManager from './DataModules/CacheManager';
 
 type UserData = {
   id: number,
@@ -41,22 +44,29 @@ function App() {
     getData();
   }, []);
   */
+ 
+  const Data:DataWrapper = {
+    session: new AccountManager(),
+    cache: new CacheManager(),
+  }
 
   return (
     <div>
-      <BrowserRouter>
-      <TopNavBar/>
-          <div id="page-content">
-            <Routes>
-              <Route path="/" element={<ProductSearch/>}/>
-              <Route path="products" element={<ProductSearch/>}/>
-              <Route path="login" element={<AccountLogin/>}/>
-              <Route path="signup" element={<AccountCreate/>}/>
-              <Route path="cart" element={<Cart/>}/>
-              <Route path="checkout" element={<Checkout/>}/>
-            </Routes>
-          </div>
-      </BrowserRouter>
+      <DataContext.Provider value={Data}>
+        <BrowserRouter>
+            <TopNavBar/>
+            <div id="page-content">
+              <Routes>
+                <Route path="/" element={<ProductSearch/>}/>
+                <Route path="products" element={<ProductSearch/>}/>
+                <Route path="login" element={<AccountLogin/>}/>
+                <Route path="signup" element={<AccountCreate/>}/>
+                <Route path="cart" element={<Cart/>}/>
+                <Route path="checkout" element={<Checkout/>}/>
+              </Routes>
+            </div>
+        </BrowserRouter>
+      </DataContext.Provider>
     </div>
   );
 

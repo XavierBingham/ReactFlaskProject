@@ -1,4 +1,4 @@
-#controls {
+#logged-out-controls {
     width: 200px;
     height: 100%;
     display: flex;
@@ -6,7 +6,7 @@
     justify-content: space-evenly;
 }
 
-#controls > a {
+#logged-out-controls > a {
     width: 45%;
     height: 80%;
     position: relative;
@@ -15,7 +15,7 @@
     align-items: center;
 }
 
-#controls > a::after {
+#logged-out-controls > a::after {
     content: '';
     position: absolute;
     background-color: white;
@@ -27,7 +27,7 @@
     transition: opacity .3s ease, width .3s ease;
 }
 
-#controls > a:hover::after {
+#logged-out-controls > a:hover::after {
     opacity: 1;
     width: 60px;
 }

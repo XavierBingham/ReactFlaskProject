@@ -6,7 +6,7 @@ export default function Checkout() {
 
     return (
         <div>
-            a
+            Checkout
         </div>
     );
 

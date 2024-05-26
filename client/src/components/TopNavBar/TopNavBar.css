@@ -16,5 +16,6 @@
 }
 
 #app-name {
-   font-size: 30px; 
+   font-size: 30px;
+   margin: 0 auto;
 }

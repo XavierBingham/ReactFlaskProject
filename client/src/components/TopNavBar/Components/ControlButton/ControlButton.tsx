@@ -8,6 +8,7 @@ import './ControlButton.css'
 //Components
 const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
     <Tooltip
+        {...props}
         classes={{popper:className}}
         placement="bottom"
         slotProps={{
@@ -20,7 +21,7 @@ const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
                 }]
             }
         }}
-        {...props}
+        
     />
 ))(({theme}) => ({
     [`& .${tooltipClasses.tooltip}`]: {

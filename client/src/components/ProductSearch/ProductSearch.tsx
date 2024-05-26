@@ -6,7 +6,7 @@ export default function ProductSearch() {
 
     return (
         <div>
-            a
+            Product Search
         </div>
     );
 

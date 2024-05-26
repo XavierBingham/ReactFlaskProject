@@ -42,7 +42,3 @@ a {
     padding-left: 20vw;
     padding-right: 20vw;
 }
-
-#page-content * {
-    color: var(--main-color);
-}

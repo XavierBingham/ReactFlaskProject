@@ -1,6 +1,6 @@
 //Imports
 import config from '../../config';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 
 //Components
 import LoggedOutControls from './Components/LoggedOutControls/LoggedOutControls';
@@ -12,15 +12,18 @@ import { Link } from 'react-router-dom';
 
 //Styles
 import './TopNavBar.css'
+import { DataContext } from '../../pages/Core/DataContext';
 
 //Component
 function TopNavBar() {
 
     //State
+    const dataModules = useContext(DataContext);
     let [sideNavOpen, setSideNavOpen] = useState<boolean>(false);
-    
+
     //Vars
     const sideNavBarRef = useRef<HTMLDivElement>(null);
+    const userSession = dataModules?.session.getSession();
 
     //Methods
     const toggleSideNav = (event?:React.MouseEvent<HTMLButtonElement>) => {
@@ -53,7 +56,7 @@ function TopNavBar() {
                 <Link to="/">
                     <h1 id="app-name">{config.APP_NAME}</h1>
                 </Link>
-                <LoggedInControls/>
+                {userSession !== undefined ? (<LoggedInControls/>) : (<LoggedOutControls/>)}
             </div>
             <SideNavBar ref={sideNavBarRef} enabled={sideNavOpen} />
         </div>
