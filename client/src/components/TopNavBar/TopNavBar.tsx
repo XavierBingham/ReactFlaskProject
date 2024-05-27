@@ -50,9 +50,11 @@ function TopNavBar() {
     return (
         <div id="nav">
             <div id="header-nav">
-                <ControlButton id="menu-toggle" title="Navigate" handleClick={toggleSideNav}>
-                    <Menu/>
-                </ControlButton>
+                <div style={{width:"200px"}}>
+                    <ControlButton id="menu-toggle" title="Navigate" handleClick={toggleSideNav}>
+                        <Menu/>
+                    </ControlButton>
+                </div>
                 <Link to="/">
                     <h1 id="app-name">{config.APP_NAME}</h1>
                 </Link>

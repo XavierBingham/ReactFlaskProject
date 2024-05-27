@@ -1,0 +1,11 @@
+.custom-submit {
+    margin: auto;
+    width: 100%;
+    background-color: var(--main-color-darker);
+    text-align: center;
+    margin-top: 20px;
+    height: 50px;
+    color: white;
+    font-size: medium;
+    font-weight: bold;
+}

@@ -1,8 +1,11 @@
-//Styles
+//Imports
 import { Box } from '@mui/material';
-import { CustomInput } from '../Form/FormComponents';
+import { CustomInput, CustomSubmit } from '../Form/FormComponents';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { DataContext } from '../../pages/Core/DataContext';
+
+//Styles
 import './AccountCreate.css'
-import React, { useRef } from 'react';
 
 //Types
 type VerificationReturnType = [boolean, string?]
@@ -11,7 +14,14 @@ type VerificationCallback = (input:string) => VerificationReturnType
 //Component
 export default function AccountCreate() {
 
-    const FormRef = useRef<HTMLFormElement|null>(null);
+    const dataModules = useContext(DataContext);
+    const formRef = useRef<HTMLFormElement|null>(null);
+
+    //Field states
+    const [errors, setErrors] = useState<Record<string, boolean>>({});
+    const [errorMessages, setErrorMessages] = useState<Record<string, string|undefined>>({});
+    const errorSet:(Record<string, boolean>)|undefined = {};
+    const errorMessageSet:(Record<string, string|undefined>)|undefined = {};
 
     //Verification callbacks
     const Verifications = new Map<string, VerificationCallback>([
@@ -28,30 +38,71 @@ export default function AccountCreate() {
             return isValidEmail ? [true] : [false, "Invalid email address format"];
         }],
         ['password', (input:string):VerificationReturnType => {
-            if(!FormRef.current){return [false, "Internal error"];}
-            const password2Input:string = new FormData(FormRef.current).get("password2") as string;
+            if(!formRef.current){return [false, "Internal error"];}
+            const password2Input:string = new FormData(formRef.current).get("password2") as string;
             (Verifications.get('password2')!)(password2Input);
             if(input.length < 6){return [false, "Password must be at least 6 characters"];}
             return [true];
         }],
         ['password2', (input:string):VerificationReturnType => {
-            if(!FormRef.current){return [false, "Internal error"];}
-            const passwordInput:string = new FormData(FormRef.current).get("password") as string;
+            if(!formRef.current){return [false, "Internal error"];}
+            const passwordInput:string = new FormData(formRef.current).get("password") as string;
             if(input !== passwordInput){return [false, "Password does not match"];}
             return [true];
         }],
     ]);
 
+    //State initialization
+    useEffect(() => {
+        Verifications.forEach((_,name) => {
+            errorSet![name as string] = false;
+            errorMessageSet![name as string] = undefined;
+        })
+        setErrors(errorSet!);
+        setErrorMessages(errorMessageSet!);
+    }, [])
+
     //Methods
-    const FormVerify = (event:React.FormEvent<HTMLFormElement>) => {
+    const fieldClearValidation = (name:string):void => {
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: false
+        }));
+        setErrorMessages(prevErrorMessages => ({
+            ...prevErrorMessages,
+            [name]: undefined
+        }));
+    }
+
+    const fieldVerify = (name:string, input:string):boolean => {
+        const verifyMethod = Verifications.get(name);
+        if(!verifyMethod){return false;}
+        const [success, message]:[boolean, string?] = verifyMethod(input);
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: !success
+        }));
+        setErrorMessages(prevErrorMessages => ({
+            ...prevErrorMessages,
+            [name]: message
+        }));
+        return success;
+    }
+
+    const formVerify = (event:any):void => {
         event.preventDefault();
         const SubmittedData = new FormData(event.currentTarget);
-        
+        SubmittedData.forEach((_, name) => {
+            const success:boolean = fieldVerify(name, SubmittedData.get(name) as string);
+            if(!success){return;}
+        })
+        dataModules?.loader.startLoad();
     }
 
     //Component
     return (
         <div id="content-container">
+            <h1 id="account-create-title">Create an account</h1>
             <Box
                 component="form"
                 sx={{
@@ -60,27 +111,28 @@ export default function AccountCreate() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: '1rem',
                 }}
                 autoComplete="off"
-                onSubmit={FormVerify}
-                ref={FormRef}
+                ref={formRef}
+                onSubmit={formVerify}
             >
                 <div className="form-section">
-                    <CustomInput name="first" type="text" label="First Name" onChangeValidation={Verifications.get("first") as VerificationCallback}/>
-                    <div style={{width:'1rem'}}></div>
-                    <CustomInput name="last" type="text" label="Last Name" onChangeValidation={Verifications.get("last") as VerificationCallback}/>
+                    <CustomInput name="first" type="text" label="First Name" validate={fieldVerify} clearValidation={fieldClearValidation} error={errors["first"]} errorMessage={errorMessages["first"]}/>
+                    <div style={{width:'1ch'}}></div>
+                    <CustomInput name="last" type="text" label="Last Name" validate={fieldVerify} clearValidation={fieldClearValidation} error={errors["last"]} errorMessage={errorMessages["last"]}/>
                 </div>
                 <div className="form-section">
-                    <CustomInput name="email" type="email" label="Email" sx={{width:"100% !important"}} onChangeValidation={Verifications.get("email") as VerificationCallback}/>
+                    <CustomInput name="email" type="email" label="Email" sx={{width:"100% !important"}} validate={fieldVerify} clearValidation={fieldClearValidation} error={errors["email"]} errorMessage={errorMessages["email"]}/>
                 </div>
                 <div className="form-section">
-                    <CustomInput name="password" type="password" label="Password" onChangeValidation={Verifications.get("password") as VerificationCallback}/>
-                    <div style={{width:'1rem'}}></div>
-                    <CustomInput name="password2" type="password" label="Confirm Password" onChangeValidation={Verifications.get("password2") as VerificationCallback}/>
+                    <CustomInput name="password" type="password" label="Password" validate={fieldVerify} clearValidation={fieldClearValidation} error={errors["password"]} errorMessage={errorMessages["password"]}/>
+                    <div style={{width:'1ch'}}></div>
+                    <CustomInput name="password2" type="password" label="Confirm Password" validate={fieldVerify} clearValidation={fieldClearValidation} error={errors["password2"]} errorMessage={errorMessages["password2"]}/>
                 </div>
                 <div className="form-section">
-                    <CustomInput name="submit" type="submit" value="SIGN UP"/>
+                    <CustomSubmit>
+                        REGISTER
+                    </CustomSubmit>
                 </div>
             </Box>
         </div>

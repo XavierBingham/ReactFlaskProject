@@ -12,9 +12,12 @@ interface DataPayload extends JwtPayload {
 export default class AccountManager {
 
     private session:DataPayload|undefined;
+    private contentRef:React.RefObject<HTMLDivElement>;
 
-    constructor() {
-        console.log("constructing");
+    constructor(contentRef:React.RefObject<HTMLDivElement>) {
+        
+        this.contentRef = contentRef;
+
         //Check for valid session
         const token:string|null = localStorage.getItem(SESSION_KEY);
         if(!token){return;}

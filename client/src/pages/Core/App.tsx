@@ -1,5 +1,5 @@
 //Imports
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { DataContext, DataWrapper } from './DataContext';
@@ -17,6 +17,7 @@ import Cart from '../../components/Cart/Cart';
 import Checkout from '../../components/Checkout/Checkout';
 import AccountCreate from '../../components/AccountCreate/AccountCreate';
 import CacheManager from './DataModules/CacheManager';
+import LoadManager from './DataModules/LoadManager';
 
 type UserData = {
   id: number,
@@ -25,6 +26,8 @@ type UserData = {
 }
 
 function App() {
+
+  const contentRef = useRef<HTMLDivElement>(null);
 
   /*
   let [data, updateData]:[UserData[], any] = useState([]);
@@ -46,12 +49,13 @@ function App() {
   */
  
   const Data:DataWrapper = {
-    session: new AccountManager(),
-    cache: new CacheManager(),
+    session: new AccountManager(contentRef),
+    cache: new CacheManager(contentRef),
+    loader: new LoadManager(contentRef),
   }
 
   return (
-    <div>
+    <div ref={contentRef}>
       <DataContext.Provider value={Data}>
         <BrowserRouter>
             <TopNavBar/>

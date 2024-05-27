@@ -1,0 +1,10 @@
+#page-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#account-create-title {
+    font-size: xx-large;
+    color: var(--main-color);
+}
