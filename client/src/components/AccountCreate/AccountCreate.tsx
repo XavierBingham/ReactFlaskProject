@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { CustomInput, CustomSubmit } from '../Form/FormComponents';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataContext } from '../../pages/Core/DataContext';
+import { CreateAccount } from '../../api/AccountResolver';
 
 //Styles
 import './AccountCreate.css'
@@ -14,7 +15,7 @@ type VerificationCallback = (input:string) => VerificationReturnType
 //Component
 export default function AccountCreate() {
 
-    const dataModules = useContext(DataContext);
+    const dataModules = useContext(DataContext)!;
     const formRef = useRef<HTMLFormElement|null>(null);
 
     //Field states
@@ -90,13 +91,26 @@ export default function AccountCreate() {
     }
 
     const formVerify = (event:any):void => {
+
         event.preventDefault();
+
+        //Verify all fields are correct
         const SubmittedData = new FormData(event.currentTarget);
+        let success:boolean = true;
         SubmittedData.forEach((_, name) => {
-            const success:boolean = fieldVerify(name, SubmittedData.get(name) as string);
+            success = fieldVerify(name, SubmittedData.get(name) as string);
             if(!success){return;}
         })
-        dataModules?.loader.startLoad();
+        if(!success){return;}
+
+        //Remove password verify field
+        SubmittedData.delete("password2");
+
+        //Request account create
+        CreateAccount(SubmittedData).then((res) => {
+            
+        });
+
     }
 
     //Component

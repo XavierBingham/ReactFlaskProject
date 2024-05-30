@@ -1,8 +1,11 @@
 #Imports
 import os
+import secrets
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from models.user import RegisterModel as RegisterUserModel
+from flask_bcrypt import Bcrypt
+from flask_wtf import CSRFProtect
 
 #Classes
 class DatabaseController:
@@ -19,8 +22,12 @@ class DatabaseController:
 
         #Set App URI
         URI = os.getenv("DATABASE_URI")
+        SECRET_KEY = os.getenv("SECRET_KEY")
         App.config["SQLALCHEMY_DATABASE_URI"] = URI
+        App.config["SECRET_KEY"] = secrets.token_hex(32)
         DatabaseController.Database = SQLAlchemy(App)
+        DatabaseController.Bcrypt = Bcrypt(App)
+        DatabaseController.CSRF = CSRFProtect(App)
 
         #Load models
         ModelLoadOrder = [

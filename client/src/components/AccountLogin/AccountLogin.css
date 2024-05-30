@@ -7,4 +7,5 @@
 #account-create-title {
     font-size: xx-large;
     color: var(--main-color);
+    font-weight: bold;
 }

@@ -1,5 +1,5 @@
 from routers.api import Router as ApiRouter
-from routers.test import Router as TestRouter
+from routers.account import Router as AccountRouter
 
 from flask import Blueprint
 
@@ -16,8 +16,8 @@ class RouterController:
         RunOrder = [
             #/api
             {"Router": ApiRouter, "Parent": App},
-            #/api/test
-            {"Router": TestRouter, "Parent": ApiRouter},
+            #/api/account
+            {"Router": AccountRouter, "Parent": ApiRouter},
         ]
 
         print("\t[[Loading Routers:")

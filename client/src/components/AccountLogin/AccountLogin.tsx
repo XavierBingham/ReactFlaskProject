@@ -1,6 +1,6 @@
 //Imports
-import { Box } from '@mui/material';
-import { CustomInput, CustomSubmit } from '../Form/FormComponents';
+import { Box, Checkbox, FormControlLabel } from '@mui/material';
+import { CustomFormControl, CustomInput, CustomSubmit } from '../Form/FormComponents';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataContext } from '../../pages/Core/DataContext';
 
@@ -75,10 +75,12 @@ export default function AccountLogin() {
     const formVerify = (event:any):void => {
         event.preventDefault();
         const SubmittedData = new FormData(event.currentTarget);
+        let success:boolean = true;
         SubmittedData.forEach((_, name) => {
-            const success:boolean = fieldVerify(name, SubmittedData.get(name) as string);
+            success = fieldVerify(name, SubmittedData.get(name) as string);
             if(!success){return;}
         })
+        if(!success){return;}
     }
 
     //Component

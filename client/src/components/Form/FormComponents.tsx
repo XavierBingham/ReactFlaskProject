@@ -1,5 +1,5 @@
 //Imports
-import { styled, InputProps, InputBase, InputBaseProps, TextField, TextFieldProps, ButtonProps } from "@mui/material"
+import { styled, InputProps, InputBase, InputBaseProps, TextField, TextFieldProps, ButtonProps, Checkbox, FormControlLabel, FormControlLabelProps } from "@mui/material"
 import { FormEventHandler, FormHTMLAttributes, InputHTMLAttributes, useState } from "react"
 
 //Styles
@@ -71,5 +71,33 @@ export const CustomSubmit = (props:CustomSubmitProps) => {
         >
             {props.children}
         </button>
+    );
+}
+
+interface CustomFormControlProps {
+    
+}
+
+type CustomExtendedFormControlProps = CustomFormControlProps & FormControlLabelProps;
+
+const StyledCustomFormControl = styled((props:CustomExtendedFormControlProps) => {
+    
+    return (
+        <FormControlLabel
+            {...props}
+        />
+    )
+})(({theme}) => ({
+    '& .MuiFormControlLabel-label': {
+        color: 'black',
+    },
+    '& .MuiSvgIcon-root': {
+        fontSize: 28,
+    },
+}));
+
+export const CustomFormControl = (props:CustomExtendedFormControlProps) => {
+    return (
+        <StyledCustomFormControl {...props}/>
     );
 }

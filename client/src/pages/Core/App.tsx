@@ -1,9 +1,11 @@
 //Imports
-import React, {useState, useEffect, useRef} from 'react';
-import axios from 'axios';
+import {useEffect, useRef} from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { DataContext, DataWrapper } from './DataContext';
 import AccountManager from './DataModules/AccountManager';
+import { GetCSRF } from '../../api/AccountResolver';
+import CacheManager from './DataModules/CacheManager';
+import LoadManager from './DataModules/LoadManager';
 
 //Styles
 import '../../styles/Global.css';
@@ -16,8 +18,6 @@ import ProductSearch from '../../components/ProductSearch/ProductSearch';
 import Cart from '../../components/Cart/Cart';
 import Checkout from '../../components/Checkout/Checkout';
 import AccountCreate from '../../components/AccountCreate/AccountCreate';
-import CacheManager from './DataModules/CacheManager';
-import LoadManager from './DataModules/LoadManager';
 
 type UserData = {
   id: number,
@@ -28,31 +28,16 @@ type UserData = {
 function App() {
 
   const contentRef = useRef<HTMLDivElement>(null);
-
-  /*
-  let [data, updateData]:[UserData[], any] = useState([]);
-  
-  const getData = async () => {
-    await axios.get("/api/test")
-    .then((res) => {
-      const data = res.data.data;
-      updateData(data);
-    })
-    .catch((err) => {
-      console.error("Error fetching data", err);
-    });
-  };
-  
-  useEffect(() => {
-    getData();
-  }, []);
-  */
  
   const Data:DataWrapper = {
     session: new AccountManager(contentRef),
     cache: new CacheManager(contentRef),
     loader: new LoadManager(contentRef),
   }
+
+  useEffect(() => {
+    GetCSRF();
+  }, [])
 
   return (
     <div ref={contentRef}>
