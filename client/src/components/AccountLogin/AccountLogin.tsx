@@ -6,6 +6,7 @@ import { DataContext } from '../../pages/Core/DataContext';
 
 //Styles
 import './AccountLogin.css'
+import { Login } from '../../api/AccountResolver';
 
 //Types
 type VerificationReturnType = [boolean, string?]
@@ -73,6 +74,7 @@ export default function AccountLogin() {
     }
 
     const formVerify = (event:any):void => {
+
         event.preventDefault();
         const SubmittedData = new FormData(event.currentTarget);
         let success:boolean = true;
@@ -81,6 +83,12 @@ export default function AccountLogin() {
             if(!success){return;}
         })
         if(!success){return;}
+
+        //Request account login
+        Login(SubmittedData).then((res) => {
+              
+        });
+
     }
 
     //Component
