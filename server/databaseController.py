@@ -4,6 +4,7 @@ import secrets
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from models.user import RegisterModel as RegisterUserModel
+from models.refreshToken import RegisterModel as RegisterRefreshTokenModel
 from flask_bcrypt import Bcrypt
 from flask_wtf import CSRFProtect
 
@@ -32,6 +33,7 @@ class DatabaseController:
         #Load models
         ModelLoadOrder = [
             RegisterUserModel,
+            RegisterRefreshTokenModel,
         ]
         for RegisterModel in ModelLoadOrder:
             Model, QueryName = RegisterModel(DatabaseController.Database)

@@ -4,6 +4,7 @@ import { CustomInput, CustomSubmit } from '../Form/FormComponents';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataContext } from '../../pages/Core/DataContext';
 import { CreateAccount } from '../../api/AccountResolver';
+import { useNavigate } from 'react-router-dom';
 
 //Styles
 import './AccountCreate.css'
@@ -18,11 +19,12 @@ export default function AccountCreate() {
     const dataModules = useContext(DataContext)!;
     const formRef = useRef<HTMLFormElement|null>(null);
 
-    //Field states
+    //Fields
     const [errors, setErrors] = useState<Record<string, boolean>>({});
     const [errorMessages, setErrorMessages] = useState<Record<string, string|undefined>>({});
     const errorSet:(Record<string, boolean>)|undefined = {};
     const errorMessageSet:(Record<string, string|undefined>)|undefined = {};
+    const navigate = useNavigate();
 
     //Verification callbacks
     const Verifications = new Map<string, VerificationCallback>([
@@ -107,8 +109,11 @@ export default function AccountCreate() {
         SubmittedData.delete("password2");
 
         //Request account create
-        CreateAccount(SubmittedData).then((res) => {
-            
+        CreateAccount(SubmittedData, dataModules.session).then((authed:boolean) => {
+            if(!authed){
+                navigate("/login");
+                return;
+            }
         });
 
     }

@@ -18,6 +18,7 @@ import ProductSearch from '../../components/ProductSearch/ProductSearch';
 import Cart from '../../components/Cart/Cart';
 import Checkout from '../../components/Checkout/Checkout';
 import AccountCreate from '../../components/AccountCreate/AccountCreate';
+import Account from '../../components/Account/Account';
 
 type UserData = {
   id: number,
@@ -51,6 +52,7 @@ function App() {
                 <Route path="login" element={<AccountLogin/>}/>
                 <Route path="signup" element={<AccountCreate/>}/>
                 <Route path="cart" element={<Cart/>}/>
+                <Route path="account" element={<Account/>}/>
                 <Route path="checkout" element={<Checkout/>}/>
               </Routes>
             </div>

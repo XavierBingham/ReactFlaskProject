@@ -6,8 +6,10 @@ import ControlButton from '../ControlButton/ControlButton';
 import ManageDropdown from '../ManageDropdown/ManageDropdown';
 
 //Styles
-import './LoggedInControls.css'
+import './TopBarControls.css'
 import { useRef, useState } from 'react';
+import { MenuItem } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 //Component
 function LoggedInControls() {
@@ -25,26 +27,22 @@ function LoggedInControls() {
     return <div id="logged-in-controls" className="account-controls">
 
         <ControlButton
-            id="profile-button"
-            title="Manage"
-            handleClick={toggleManageMenu}
-            ref={profileButtonRef}
-        >
-            <Person/>
-        </ControlButton>
-
-        <ControlButton
             id="cart-button"
             title="My Cart"
         >
             <ShoppingCart/>
         </ControlButton>
-
-        <ManageDropdown
-            open={manageMenuOpen}
-            onClose={toggleManageMenu}
-            anchorEl={profileButtonRef.current}
-        />
+        
+        <Link to="/account">
+            <ControlButton
+                id="profile-button"
+                title="Account"
+                handleClick={toggleManageMenu}
+                ref={profileButtonRef}
+            >
+                <Person/>
+            </ControlButton>
+        </Link>
 
     </div>
 

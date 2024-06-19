@@ -9,3 +9,19 @@
     color: var(--main-color);
     font-weight: bold;
 }
+
+#create-account-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#create-account-section * {
+    color: var(--main-color);
+}
+
+#create-account-section button {
+    font-weight: bold;
+    text-decoration: underline;
+}

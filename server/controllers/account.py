@@ -6,7 +6,9 @@ from databaseController import DatabaseController
 import jwt
 import datetime
 from flask import current_app as app
+import os
 
+#Vars
 firstValidator = StringField(
         "first",
         validators=[DataRequired(), Length(min=1, max=20)]
@@ -26,42 +28,114 @@ passwordValidator = PasswordField(
         validators=[DataRequired(), Length(min=6)]
     )
 
-AUTH_TOKEN_KEY = "auth_token"
+#Session management
+def get_token(user, key, duration, tokenData):
+    currentTime = datetime.datetime.now(datetime.timezone.utc)
+    try:
+        tokenData['sub'] = user.user_id
+        tokenData['iat'] = currentTime
+        tokenData['exp'] = currentTime + duration
+        token = jwt.encode(
+            tokenData,
+            key=app.config["SECRET_KEY"],
+            algorithm='HS256',
+        )
+        return True, {
+            "value": token,
+            "maxAge": duration,
+            "iat": currentTime,
+            "exp": currentTime + duration,
+        }
+    except Exception as e:
+        print("Token couldn't be assigned", key, e)
+        return False, "Error authenticating"
 
+def get_access_token(user):
+    success, access_token = get_token(user, os.getenv("ACCESS_TOKEN_KEY"), datetime.timedelta(minutes=5), {
+        'displayName': user.firstName + " " + user.lastName[0],
+    })
+    return success, access_token
+
+def get_refresh_token(user):
+    success, refresh_token = get_token(user, os.getenv("REFRESH_TOKEN_KEY"), datetime.timedelta(hours=5), {})
+    if success:
+        try:
+
+            refreshTokensModel = DatabaseController.Models.get("RefreshToken")
+
+            #Attempt saving refresh token to database
+            dbToken = refreshTokensModel(
+                user.user_id,
+                refresh_token["value"],
+                refresh_token["exp"],
+                refresh_token["iat"],
+            )
+
+            #Add to database
+            db = DatabaseController.Database
+            db.session.add(dbToken)
+            db.session.commit()
+            
+        except Exception as e:
+            print("Refresh token could not be saved", e)
+            return False, "Refresh token could not be saved"
+
+    return success, refresh_token
+
+def apply_token(response, key, tokenData):
+    response.set_cookie(
+            key,
+            tokenData["value"],
+            tokenData["maxAge"],
+            tokenData["exp"],
+            httponly=True
+        )
+    response.headers.set(key, tokenData["value"])
+
+def authenticate(user, successMessage, failMessage, doErrorMessage):
+    #Create authenticated session
+    refresh_auth_success, refresh_data = get_refresh_token(user)
+    access_auth_success, access_data = None, None
+    if refresh_auth_success:
+        access_auth_success, access_data = get_access_token(user)
+
+    response = None
+    if access_auth_success:
+        #If tokens applied, update cookies
+        response = jsonify({"message": successMessage})
+        apply_token(response, os.getenv("REFRESH_TOKEN_KEY"), access_data)
+        apply_token(response, os.getenv("ACCESS_TOKEN_KEY"), refresh_data)
+    else:
+        #If tokens could not be applied, request a redirect to the login page
+        if doErrorMessage:
+            response = jsonify({
+                "error": failMessage,
+                "redirect": "/login",
+            })
+        else:
+            response = jsonify({
+                "message": failMessage,
+                "redirect": "/login",
+            })
+
+        #Apply refresh token if that was successfully made
+        if refresh_auth_success:
+            apply_token(response, os.getenv("REFRESH_TOKEN_KEY"), refresh_data)
+
+    return response
+
+#Index
 def index():
     return jsonify({
         "data": "yes",
     }), 200
 
+#Account creation
 class CreateAccountForm(FlaskForm):
     first = firstValidator
     last = lastValidator
     email = emailValidator
     password = passwordValidator
-
-def authenticate_session(user):
-    currentTime = datetime.datetime.now()
-    maxAge = datetime.timedelta(hours=1)
-    expireTime = currentTime + maxAge
-    try:
-        auth_token = jwt.encode(
-            {
-                'sub': user.id,
-                'iat': currentTime,
-                'exp': expireTime,
-                'displayName': user.firstName + " " + user.lastName[0],
-            },
-            key=app.config["SECRET_KEY"],
-            algorithm='HS256',
-        )
-        return True, {
-            "value": auth_token,
-            "maxAge": maxAge,
-            "expires": expireTime
-        }
-    except Exception as e:
-        print("Auth Token Exception:", e)
-        return False, "Error authenticating"
 
 def create():
     
@@ -95,14 +169,16 @@ def create():
     db.session.add(user)
     db.session.commit()
     
-    #Create authenticated session
-    response = jsonify({"message": "Account successfully created"})
-    auth_success, data = authenticate_session(user)
-    if auth_success:
-        response.set_cookie(AUTH_TOKEN_KEY, data["value"], data["maxAge"], data["expires"])
-
+    #Authenticate user
+    response = authenticate(
+        user = user,
+        successMessage = "Account successfully created!",
+        failMessage = "Account successfully created!",
+        doErrorMessage = False,
+    )
     return response, 200
 
+#Account login
 class LoginAccountForm(FlaskForm):
     email = emailValidator
     password = passwordValidator
@@ -136,13 +212,11 @@ def login():
         response = jsonify({"error":"Username or password is incorrect"})
         return response, 401
 
-    #Create authenticated session
-    auth_success, data = authenticate_session(existingUser)
-    
-    if auth_success:
-        response = jsonify({"message":"Successfully logged in"})
-        response.set_cookie(AUTH_TOKEN_KEY, data["value"], data["maxAge"], data["expires"])
-        return response, 200
-    else:
-        response = jsonify({"error":"Could not authenticate user"})
-        return response, 400
+    #Authenticate user
+    response = authenticate(
+        user = existingUser,
+        successMessage = "Successfully logged in!",
+        failMessage = "Could not log user in!",
+        doErrorMessage = True,
+    )
+    return response

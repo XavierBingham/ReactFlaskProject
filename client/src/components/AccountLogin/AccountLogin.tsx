@@ -7,6 +7,7 @@ import { DataContext } from '../../pages/Core/DataContext';
 //Styles
 import './AccountLogin.css'
 import { Login } from '../../api/AccountResolver';
+import { Link } from 'react-router-dom';
 
 //Types
 type VerificationReturnType = [boolean, string?]
@@ -15,10 +16,10 @@ type VerificationCallback = (input:string) => VerificationReturnType
 //Component
 export default function AccountLogin() {
 
-    const dataModules = useContext(DataContext);
+    const dataModules = useContext(DataContext)!;
     const formRef = useRef<HTMLFormElement|null>(null);
 
-    //Field states
+    //Fields
     const [errors, setErrors] = useState<Record<string, boolean>>({});
     const [errorMessages, setErrorMessages] = useState<Record<string, string|undefined>>({});
     const errorSet:(Record<string, boolean>)|undefined = {};
@@ -85,7 +86,7 @@ export default function AccountLogin() {
         if(!success){return;}
 
         //Request account login
-        Login(SubmittedData).then((res) => {
+        Login(SubmittedData, dataModules.session).then((res) => {
               
         });
 
@@ -118,6 +119,14 @@ export default function AccountLogin() {
                     <CustomSubmit>
                         SIGN IN
                     </CustomSubmit>
+                </div>
+                <div id="create-account-section" className="form-section">
+                    <p>Don't have an account?</p>
+                    <Link to="/signup">
+                        <button>
+                            Register
+                        </button>
+                    </Link>
                 </div>
             </Box>
         </div>

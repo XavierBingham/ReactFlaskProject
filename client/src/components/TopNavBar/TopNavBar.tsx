@@ -3,8 +3,7 @@ import config from '../../config';
 import { useState, useEffect, useRef, useContext } from 'react';
 
 //Components
-import LoggedOutControls from './Components/LoggedOutControls/LoggedOutControls';
-import LoggedInControls from './Components/LoggedInControls/LoggedInControls';
+import TopBarControls from './Components/TopBarControls/TopBarControls';
 import { Menu } from '@mui/icons-material';
 import ControlButton from './Components/ControlButton/ControlButton';
 import SideNavBar from '../SideNavBar/SideNavBar';
@@ -18,12 +17,10 @@ import { DataContext } from '../../pages/Core/DataContext';
 function TopNavBar() {
 
     //State
-    const dataModules = useContext(DataContext);
     let [sideNavOpen, setSideNavOpen] = useState<boolean>(false);
 
     //Vars
     const sideNavBarRef = useRef<HTMLDivElement>(null);
-    const userSession = dataModules?.session.getSession();
 
     //Methods
     const toggleSideNav = (event?:React.MouseEvent<HTMLButtonElement>) => {
@@ -50,7 +47,7 @@ function TopNavBar() {
     return (
         <div id="nav">
             <div id="header-nav">
-                <div style={{width:"200px"}}>
+                <div style={{width:"100px"}}>
                     <ControlButton id="menu-toggle" title="Navigate" handleClick={toggleSideNav}>
                         <Menu/>
                     </ControlButton>
@@ -58,7 +55,7 @@ function TopNavBar() {
                 <Link to="/">
                     <h1 id="app-name">{config.APP_NAME}</h1>
                 </Link>
-                {userSession !== undefined ? (<LoggedInControls/>) : (<LoggedOutControls/>)}
+                <TopBarControls/>
             </div>
             <SideNavBar ref={sideNavBarRef} enabled={sideNavOpen} />
         </div>

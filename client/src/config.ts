@@ -1,4 +1,5 @@
 const Config = {
+    ACCESS_TOKEN_KEY: "access_token",
     APP_NAME: "Generic Brand",
     PRODUCT_NAV_OPTIONS: {
         ENTRIES: {

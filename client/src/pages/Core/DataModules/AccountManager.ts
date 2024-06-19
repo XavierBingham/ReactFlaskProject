@@ -1,11 +1,10 @@
 //Imports
 import { JwtPayload, jwtDecode } from "jwt-decode";
+import Config from "../../../config";
 
 //Vars
-const SESSION_KEY:string = "SESSION_TOKEN";
-
 interface DataPayload extends JwtPayload {
-
+    displayName:string,
 }
 
 //Class
@@ -19,24 +18,29 @@ export default class AccountManager {
         this.contentRef = contentRef;
 
         //Check for valid session
-        const token:string|null = localStorage.getItem(SESSION_KEY);
+        const token:string|null = localStorage.getItem(Config.ACCESS_TOKEN_KEY);
+        console.log("decoding", token);
         if(!token){return;}
 
         //Check that token hasn't expired
         const decodedToken:DataPayload = jwtDecode(token);
-        if(!decodedToken.exp || (Date.now()/1_000) >= decodedToken.exp){return;}
+        console.log(decodedToken, Date.now()/1_000, decodedToken.exp);
+        if(!decodedToken.exp || (Date.now()/1_000) >= decodedToken.exp){
+            this.clearToken();
+            return;
+        }
 
         this.session = decodedToken;
 
     }
 
     public setToken(token:string): void {
-        localStorage.setItem(SESSION_KEY, token);
+        localStorage.setItem(Config.ACCESS_TOKEN_KEY, token);
         this.session = jwtDecode(token);
     }
 
     public clearToken(): void {
-        localStorage.removeItem(SESSION_KEY);
+        localStorage.removeItem(Config.ACCESS_TOKEN_KEY);
         this.session = undefined;
     }
 
