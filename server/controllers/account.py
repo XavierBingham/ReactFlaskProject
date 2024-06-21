@@ -51,7 +51,7 @@ def get_token(user, key, duration, tokenData):
         return False, "Error authenticating"
 
 def get_access_token(user):
-    success, access_token = get_token(user, os.getenv("ACCESS_TOKEN_KEY"), datetime.timedelta(minutes=5), {
+    success, access_token = get_token(user, os.getenv("ACCESS_TOKEN_KEY"), datetime.timedelta(seconds=10), {
         'displayName': user.firstName + " " + user.lastName[0],
     })
     return success, access_token
@@ -90,7 +90,6 @@ def apply_token(response, key, tokenData):
             tokenData["exp"],
             httponly=True
         )
-    response.headers.set(key, tokenData["value"])
 
 def authenticate(user, successMessage, failMessage, doErrorMessage):
     #Create authenticated session
@@ -103,8 +102,9 @@ def authenticate(user, successMessage, failMessage, doErrorMessage):
     if access_auth_success:
         #If tokens applied, update cookies
         response = jsonify({"message": successMessage})
-        apply_token(response, os.getenv("REFRESH_TOKEN_KEY"), access_data)
-        apply_token(response, os.getenv("ACCESS_TOKEN_KEY"), refresh_data)
+        apply_token(response, os.getenv("ACCESS_TOKEN_KEY"), access_data)
+        apply_token(response, os.getenv("REFRESH_TOKEN_KEY"), refresh_data)
+        response.headers.set(os.getenv("ACCESS_TOKEN_KEY"), access_data["value"])
     else:
         #If tokens could not be applied, request a redirect to the login page
         if doErrorMessage:
@@ -117,7 +117,6 @@ def authenticate(user, successMessage, failMessage, doErrorMessage):
                 "message": failMessage,
                 "redirect": "/login",
             })
-
         #Apply refresh token if that was successfully made
         if refresh_auth_success:
             apply_token(response, os.getenv("REFRESH_TOKEN_KEY"), refresh_data)
@@ -129,6 +128,42 @@ def index():
     return jsonify({
         "data": "yes",
     }), 200
+
+#Access token refreshing
+def refresh_access():
+    
+    refresh_token = request.cookies.get(os.getenv("REFRESH_TOKEN_KEY"))
+    user = None
+
+    try:
+        
+        #Retrieve user
+        decoded_refresh_token = jwt.decode(
+            refresh_token,
+            key=app.config["SECRET_KEY"],
+            algorithms=['HS256'],
+        )
+        
+        usersModel = DatabaseController.Models.get("User")
+        user = usersModel.query.filter_by(user_id=decoded_refresh_token["sub"]).first()
+        
+        if not user:
+            raise Exception("User does not exist any longer, user_id: " + decoded_refresh_token.sub)
+
+    except Exception as e:
+        return jsonify({
+            "error": "Could not authenticate. Please login again.",
+            "redirect": "/login",
+        }), 400
+
+    response = authenticate(
+        user,
+        successMessage = "Successfully refreshed authentication.",
+        failMessage = "Could not refresh authentication.",
+        doErrorMessage = True,
+    )
+    
+    return response, 200
 
 #Account creation
 class CreateAccountForm(FlaskForm):

@@ -1,7 +1,7 @@
 //Imports
 import axios from "axios";
 import { DataWrapper } from "../DataContext";
-import { NavigateFunction } from "react-router-dom";
+import Config from "../../../config";
 
 //Interfaces
 interface EndpointProps {
@@ -36,6 +36,7 @@ export default class EndpointManager {
         
         return new Promise((resolve, reject) => {
             try {
+                this.RunAuthInterceptor();
                 this.RunEndpoint(
                     axios.post(Props.Url, Props.Data, this.GetConfig()),
                     resolve,
@@ -55,6 +56,7 @@ export default class EndpointManager {
         
         return new Promise((resolve, reject) => {
             try {
+                this.RunAuthInterceptor();
                 this.RunEndpoint(
                     axios.get(Props.Url, this.GetConfig()),
                     resolve,
@@ -76,6 +78,18 @@ export default class EndpointManager {
                 "X-CSRFToken": sessionStorage.getItem("csrf_token"),
             }
         } 
+    }
+
+    public async RunAuthInterceptor() {
+        if(this.dataModules?.session.getSession() !== undefined && !this.dataModules.session.checkExpirationValid()){
+            this.GetEndpoint({
+                Url: "/api/account/refresh_access",
+            })
+            .then((res) => {
+                const AuthToken = res.headers[Config.ACCESS_TOKEN_KEY];
+                this.dataModules?.session.setToken(AuthToken);
+            })
+        }
     }
 
     private async RunEndpoint(promise:Promise<any>, resolve:(value:unknown)=>any, reject:(reason?:any)=>any) {

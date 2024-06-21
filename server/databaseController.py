@@ -23,7 +23,6 @@ class DatabaseController:
 
         #Set App URI
         URI = os.getenv("DATABASE_URI")
-        SECRET_KEY = os.getenv("SECRET_KEY")
         App.config["SQLALCHEMY_DATABASE_URI"] = URI
         App.config["SECRET_KEY"] = secrets.token_hex(32)
         DatabaseController.Database = SQLAlchemy(App)

@@ -21,23 +21,25 @@ export default class AccountManager {
         
         //Check for valid session
         const token:string|null = localStorage.getItem(Config.ACCESS_TOKEN_KEY);
-        console.log("decoding", token);
         if(!token){return;}
 
         //Check that token hasn't expired
         const decodedToken:DataPayload = jwtDecode(token);
-        console.log(decodedToken, Date.now()/1_000, decodedToken.exp);
-        if(!decodedToken.exp || (Date.now()/1_000) >= decodedToken.exp){
-            this.clearToken();
-            return;
-        }
-
         this.session = decodedToken;
 
     }
-
+    
     public setModules(modules:DataWrapper): void {
         this.dataModules = modules;
+        modules.endpoint.RunAuthInterceptor();
+    }
+
+    public checkExpirationValid(): boolean {
+        if(this.session && (Date.now()/1_000) < this.session.exp!){
+            return true;
+        }
+        this.clearToken();
+        return false;
     }
 
     public setToken(token:string): void {
