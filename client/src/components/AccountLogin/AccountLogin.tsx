@@ -86,7 +86,7 @@ export default function AccountLogin() {
         if(!success){return;}
 
         //Request account login
-        Login(SubmittedData, dataModules.session).then((res) => {
+        Login(dataModules, SubmittedData).then((res) => {
               
         });
 

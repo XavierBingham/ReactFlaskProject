@@ -6,7 +6,6 @@ from controllers.account import (
 from middleware.middleware import (
     authenticated,
     unauthenticated,
-    apply_csrf
 )
 
 class Router:

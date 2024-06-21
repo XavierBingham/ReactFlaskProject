@@ -8,25 +8,35 @@ def authenticated(callback):
     @wraps(callback)
     def decoratedFunction(*args, **kwargs):
         
-        auth_token = request.cookies.get(os.getenv("ACCESS_TOKEN_KEY"))
-        if not auth_token:
+        access_token = request.cookies.get(os.getenv("ACCESS_TOKEN_KEY"))
+        refresh_token = request.cookies.get(os.getenv("REFRESH_TOKEN_KEY"))
+    
+        if not access_token or not refresh_token:
             return jsonify({
-                "error": "Invalid authentication token"
+                "error": "Invalid authentication",
+                "redirect": "/login",
             }), 401
 
         try:
             decoded_auth_token = jwt.decode(
-                auth_token,
+                access_token,
+                key=app.config["SECRET_KEY"],
+                algorithms=['HS256'],
+            )
+            decoded_auth_token = jwt.decode(
+                refresh_token,
                 key=app.config["SECRET_KEY"],
                 algorithms=['HS256'],
             )
         except jwt.exceptions.ExpiredSignatureError as e:
             return jsonify({
-                "error": "Could not authenticate user"
+                "error": "Could not authenticate user",
+                "redirect": "/login",
             }), 401
         except Exception as e:
             return jsonify({
-                "error": "Authentication expired"
+                "error": "Authentication expired",
+                "redirect": "/login",
             }), 401
         
         return callback(*args, **kwargs)
@@ -38,10 +48,16 @@ def unauthenticated(callback):
     @wraps(callback)
     def decoratedFunction(*args, **kwargs):
         
-        auth_token = request.cookies.get(os.getenv("ACCESS_TOKEN_KEY"))
+        access_token = request.cookies.get(os.getenv("ACCESS_TOKEN_KEY"))
+        refresh_token = request.cookies.get(os.getenv("REFRESH_TOKEN_KEY"))
         try:
-            decoded_auth_token = jwt.decode(
-                auth_token,
+            decoded_access_token = jwt.decode(
+                access_token,
+                key=app.config["SECRET_KEY"],
+                algorithms=['HS256'],
+            )
+            decoded_refresh_token = jwt.decode(
+                refresh_token,
                 key=app.config["SECRET_KEY"],
                 algorithms=['HS256'],
             )
@@ -50,15 +66,5 @@ def unauthenticated(callback):
             }), 401
         except Exception as e:
             return callback(*args, **kwargs)
-    
-    return decoratedFunction
-
-def apply_csrf(callback):
-
-    @wraps(callback)
-    def decoratedFunction(*args, **kwargs):
-        
-        request.headers.set("x-csrftoken", request.cookies.get("session"))
-        return callback(*args, **kwargs)
     
     return decoratedFunction

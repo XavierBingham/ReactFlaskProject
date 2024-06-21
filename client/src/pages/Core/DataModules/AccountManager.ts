@@ -1,6 +1,7 @@
 //Imports
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import Config from "../../../config";
+import { DataWrapper } from "../DataContext";
 
 //Vars
 interface DataPayload extends JwtPayload {
@@ -12,11 +13,12 @@ export default class AccountManager {
 
     private session:DataPayload|undefined;
     private contentRef:React.RefObject<HTMLDivElement>;
+    private dataModules:DataWrapper|undefined;
 
     constructor(contentRef:React.RefObject<HTMLDivElement>) {
         
         this.contentRef = contentRef;
-
+        
         //Check for valid session
         const token:string|null = localStorage.getItem(Config.ACCESS_TOKEN_KEY);
         console.log("decoding", token);
@@ -32,6 +34,10 @@ export default class AccountManager {
 
         this.session = decodedToken;
 
+    }
+
+    public setModules(modules:DataWrapper): void {
+        this.dataModules = modules;
     }
 
     public setToken(token:string): void {

@@ -109,7 +109,7 @@ export default function AccountCreate() {
         SubmittedData.delete("password2");
 
         //Request account create
-        CreateAccount(SubmittedData, dataModules.session).then((authed:boolean) => {
+        CreateAccount(dataModules, SubmittedData).then((authed:boolean) => {
             if(!authed){
                 navigate("/login");
                 return;

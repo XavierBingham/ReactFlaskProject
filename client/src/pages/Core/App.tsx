@@ -1,6 +1,6 @@
 //Imports
-import {useEffect, useRef} from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {useEffect, useRef, useState} from 'react';
+import { BrowserRouter, NavigateFunction, Route, Routes, useNavigate } from 'react-router-dom';
 import { DataContext, DataWrapper } from './DataContext';
 import AccountManager from './DataModules/AccountManager';
 import { GetCSRF } from '../../api/AccountResolver';
@@ -19,44 +19,50 @@ import Cart from '../../components/Cart/Cart';
 import Checkout from '../../components/Checkout/Checkout';
 import AccountCreate from '../../components/AccountCreate/AccountCreate';
 import Account from '../../components/Account/Account';
-
-type UserData = {
-  id: number,
-  firstName: string,
-  lastName: string,
-}
+import EndpointManager from './DataModules/EndpointManager';
 
 function App() {
 
   const contentRef = useRef<HTMLDivElement>(null);
- 
-  const Data:DataWrapper = {
-    session: new AccountManager(contentRef),
-    cache: new CacheManager(contentRef),
-    loader: new LoadManager(contentRef),
-  }
+  const [dataModules, setDataModules] = useState<DataWrapper|null>(null);
+  const navigator = useNavigate();
 
   useEffect(() => {
-    GetCSRF();
-  }, [])
 
+    const navigatorWrapper = (directory:string) => {
+      navigator(directory);
+    }
+
+    const loadedModules = {
+      session: new AccountManager(contentRef),
+      cache: new CacheManager(contentRef),
+      loader: new LoadManager(contentRef),
+      endpoint: new EndpointManager(contentRef, navigatorWrapper),
+    }
+
+    for(let [_,module] of Object.entries(loadedModules)){
+      module.setModules(loadedModules);
+    }
+    setDataModules(loadedModules);
+    GetCSRF(loadedModules);
+
+  }, [])
+  
   return (
     <div ref={contentRef}>
-      <DataContext.Provider value={Data}>
-        <BrowserRouter>
-            <TopNavBar/>
-            <div id="page-content">
-              <Routes>
-                <Route path="/" element={<ProductSearch/>}/>
-                <Route path="products" element={<ProductSearch/>}/>
-                <Route path="login" element={<AccountLogin/>}/>
-                <Route path="signup" element={<AccountCreate/>}/>
-                <Route path="cart" element={<Cart/>}/>
-                <Route path="account" element={<Account/>}/>
-                <Route path="checkout" element={<Checkout/>}/>
-              </Routes>
-            </div>
-        </BrowserRouter>
+      <DataContext.Provider value={dataModules!}>
+          <TopNavBar/>
+          <div id="page-content">
+            <Routes>
+              <Route path="/" element={<ProductSearch/>}/>
+              <Route path="products" element={<ProductSearch/>}/>
+              <Route path="login" element={<AccountLogin/>}/>
+              <Route path="signup" element={<AccountCreate/>}/>
+              <Route path="cart" element={<Cart/>}/>
+              <Route path="account" element={<Account/>}/>
+              <Route path="checkout" element={<Checkout/>}/>
+            </Routes>
+          </div>
       </DataContext.Provider>
     </div>
   );

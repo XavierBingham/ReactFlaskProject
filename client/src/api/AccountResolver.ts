@@ -1,11 +1,10 @@
 //Imports
-import AccountManager from "../pages/Core/DataModules/AccountManager";
-import { GetEndpoint, PostEndpoint } from "./Endpoint/Endpoint";
 import Config from "../config";
+import { DataWrapper } from "../pages/Core/DataContext";
 
 //Methods
-export async function CreateAccount(Data:FormData, AccountManager:AccountManager):Promise<any> {
-    return PostEndpoint({
+export async function CreateAccount(DataModules:DataWrapper, Data:FormData):Promise<any> {
+    return DataModules.endpoint.PostEndpoint({
         Url: "/api/account/create",
         Data: Data,
     }).then((res) => {
@@ -13,23 +12,23 @@ export async function CreateAccount(Data:FormData, AccountManager:AccountManager
         if(!AuthToken){
             return false;
         }
-        AccountManager.setToken(AuthToken);
+        DataModules.session.setToken(AuthToken);
         return true;
     })
 }
 
-export async function Login(Data:FormData, AccountManager:AccountManager):Promise<any> {
-    return PostEndpoint({
+export async function Login(DataModules:DataWrapper, Data:FormData):Promise<any> {
+    return DataModules.endpoint.PostEndpoint({
         Url: "/api/account/login",
         Data: Data,
     }).then((res) => {
         const AuthToken = res.headers[Config.ACCESS_TOKEN_KEY];
-        AccountManager.setToken(AuthToken);
+        DataModules.session.setToken(AuthToken);
     })
 }
 
-export async function GetCSRF():Promise<any> {
-    return GetEndpoint({
+export async function GetCSRF(DataModules:DataWrapper):Promise<any> {
+    return DataModules.endpoint.GetEndpoint({
         Url: "/api/get_csrf_token",
     }).then((res) => {
         const CSRFToken = res.headers["x-csrftoken"];
