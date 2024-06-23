@@ -7,6 +7,8 @@ import jwt
 import datetime
 from flask import current_app as app
 import os
+import psycopg2
+from sqlalchemy.exc import IntegrityError
 
 #Vars
 firstValidator = StringField(
@@ -200,9 +202,23 @@ def create():
     )
     
     #Add to database
-    db = DatabaseController.Database
-    db.session.add(user)
-    db.session.commit()
+    try:
+        
+        db = DatabaseController.Database
+        db.session.add(user)
+        db.session.commit()
+        
+    except IntegrityError as e:
+        print("Account couldn't be created 1:", e)
+        return jsonify({
+            "error": "Email is already in use."
+        }), 409
+    
+    except Exception as e:
+        print("Account couldn't be created 2:", e)
+        return jsonify({
+            "error": "Account could not be created, please try again."
+        }), 500
     
     #Authenticate user
     response = authenticate(

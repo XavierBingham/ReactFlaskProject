@@ -78,12 +78,12 @@ export default function AccountLogin() {
 
         event.preventDefault();
         const SubmittedData = new FormData(event.currentTarget);
-        let success:boolean = true;
-        SubmittedData.forEach((_, name) => {
-            success = fieldVerify(name, SubmittedData.get(name) as string);
-            if(!success){return;}
-        })
-        if(!success){return;}
+        let unsuccesses:number = 0;
+        for(let [name,_] of SubmittedData.entries()){
+            const success = fieldVerify(name, SubmittedData.get(name) as string);
+            if(!success){unsuccesses += 1;}
+        }
+        if(unsuccesses > 0){return;}
 
         //Request account login
         Login(dataModules, SubmittedData).then((res) => {

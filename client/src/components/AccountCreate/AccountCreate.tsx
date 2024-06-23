@@ -49,6 +49,7 @@ export default function AccountCreate() {
         }],
         ['password2', (input:string):VerificationReturnType => {
             if(!formRef.current){return [false, "Internal error"];}
+            if(input.length === 0){return [false];}
             const passwordInput:string = new FormData(formRef.current).get("password") as string;
             if(input !== passwordInput){return [false, "Password does not match"];}
             return [true];
@@ -98,23 +99,25 @@ export default function AccountCreate() {
 
         //Verify all fields are correct
         const SubmittedData = new FormData(event.currentTarget);
-        let success:boolean = true;
-        SubmittedData.forEach((_, name) => {
-            success = fieldVerify(name, SubmittedData.get(name) as string);
-            if(!success){return;}
-        })
-        if(!success){return;}
+        let unsuccesses:number = 0;
+        for(let [name,_] of SubmittedData.entries()){
+            const success = fieldVerify(name, SubmittedData.get(name) as string);
+            if(!success){unsuccesses += 1;}
+        }
+        if(unsuccesses > 0){return;}
 
         //Remove password verify field
         SubmittedData.delete("password2");
 
         //Request account create
-        CreateAccount(dataModules, SubmittedData).then((authed:boolean) => {
+        CreateAccount(dataModules, SubmittedData)
+        .then((authed:boolean) => {
             if(!authed){
                 navigate("/login");
                 return;
             }
-        });
+        })
+        .catch(err => {});
 
     }
 

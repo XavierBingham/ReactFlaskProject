@@ -1,5 +1,5 @@
 //Imports
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { DataWrapper } from "../DataContext";
 import Config from "../../../config";
 
@@ -32,43 +32,31 @@ export default class EndpointManager {
         this.dataModules = modules;
     }
 
-    public async PostEndpoint(Props:PostEndpointProps):Promise<any> {
+    public PostEndpoint(Props:PostEndpointProps):Promise<any> {
         
         return new Promise((resolve, reject) => {
-            try {
-                this.RunAuthInterceptor();
-                this.RunEndpoint(
-                    axios.post(Props.Url, Props.Data, this.GetConfig()),
-                    resolve,
-                    reject
-                )
-            } catch (error) {
-                reject({
-                    error: "Internal server error",
-                    code: 500,
-                })
-            }
-        });
+            this.RunAuthInterceptor();
+            this.RunEndpoint(
+                axios.post,
+                [Props.Url, Props.Data],
+                resolve,
+                reject
+            )
+        })
         
     }
 
-    public async GetEndpoint(Props:GetEndpointProps):Promise<any> {
+    public GetEndpoint(Props:GetEndpointProps):Promise<any> {
         
         return new Promise((resolve, reject) => {
-            try {
-                this.RunAuthInterceptor();
-                this.RunEndpoint(
-                    axios.get(Props.Url, this.GetConfig()),
-                    resolve,
-                    reject
-                )
-            } catch (error) {
-                reject({
-                    error: "Internal server error",
-                    code: 500,
-                })
-            }
-        });
+            this.RunAuthInterceptor();
+            this.RunEndpoint(
+                axios.get,
+                [Props.Url],
+                resolve,
+                reject
+            )
+        })
         
     }
 
@@ -80,7 +68,7 @@ export default class EndpointManager {
         } 
     }
 
-    public async RunAuthInterceptor() {
+    public RunAuthInterceptor() {
         if(this.dataModules?.session.getSession() !== undefined && !this.dataModules.session.checkExpirationValid()){
             this.GetEndpoint({
                 Url: "/api/account/refresh_access",
@@ -92,8 +80,18 @@ export default class EndpointManager {
         }
     }
 
-    private async RunEndpoint(promise:Promise<any>, resolve:(value:unknown)=>any, reject:(reason?:any)=>any) {
-            promise.then((res) => {
+    private RunEndpoint(RequestType:Axios["get"]|Axios["post"], [Url, PostData]: [string, any?], Resolve:(value:unknown)=>any, Reject:(reason?:any)=>any) {
+        
+        try {
+            let requestPromise: Promise<any>;
+            if((RequestType === axios.get)) {
+                requestPromise = axios.get(Url, this.GetConfig());
+            } else {
+                requestPromise = axios.post(Url, PostData, this.GetConfig());
+            }
+
+            requestPromise
+            .then((res:any) => {
                 
                 //Data handling
                 const data = res.data;
@@ -103,23 +101,46 @@ export default class EndpointManager {
                         this.navigator(data.redirect);
                     }
                 }
-        
-                if(res.status !== 200){
-                    return reject({
-                        error: (data && data.error) || "Internal server error",
-                        code: res.status,
-                    });
-                }
-        
-                return res;
+                
+                this.HandleResponse(res);
+                Resolve(res);
         
             })
-            .then(res => resolve(res))
-            .catch(err => reject({
-                error: "Internal server error",
-                code: 500,
-            }))
-            return promise;
+            .catch(err => {
+                if(err.response){
+                    this.HandleResponse(err.response);
+                    Reject(err.response)
+                }else{
+                    const response = {
+                        data: {
+                            error: "Unexpected error",
+                            status: 500,
+                        },
+                    }
+                    this.HandleResponse(response);
+                    Reject(response)
+                }
+            })
+        }
+        catch (err) {
+            const response = {
+                data: {
+                    error: "Internal client endpoint error",
+                    status: 500,
+                },
+            }
+            this.HandleResponse(response);
+            Reject(response);
+        }
+
+    }
+
+    private HandleResponse(Response:any): any {
+        const status:number = Response.status;
+        const data:any|undefined = Response.data;
+        const error:string|undefined = data?.error;
+        const message:string|undefined = data?.message;
+        console.log(error, message, status);
     }
 
 }
