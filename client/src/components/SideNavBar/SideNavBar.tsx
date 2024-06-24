@@ -10,13 +10,13 @@ import { NavAccordion, NavLink } from './Components/NavAccordion/NavAccordion';
 import './SideNavBar.css';
 
 //Component
-const SideNavBar = forwardRef((props:{enabled:boolean}, ref:ForwardedRef<HTMLDivElement>) => {
+const SideNavBar = forwardRef((props:{enabled:boolean, onLinkClick:()=>void}, ref:ForwardedRef<HTMLDivElement>) => {
 
     //State
     const [expandedId, setExpandedId] = useState<string|undefined>(undefined);
 
     //Vars
-    const { enabled } = props;
+    const { enabled, onLinkClick } = props;
 
     //Methods
     const expandSection = (id:string) => (event: React.SyntheticEvent<Element, Event>, expanded: boolean) => {
@@ -37,10 +37,24 @@ const SideNavBar = forwardRef((props:{enabled:boolean}, ref:ForwardedRef<HTMLDiv
         <div id="side-nav" className={`${enabled?"enabled":"disabled"}`}>
             <div ref={ref} id="side-nav-bg">
                 {Object.entries(Config.PRODUCT_NAV_OPTIONS.ENTRIES).map(([category, subCategories]) => (
-                    <NavAccordion id={`accordion-${category}`} expandedId={expandedId} onChange={expandSection} category={category} subCategories={subCategories}/>
+                    <NavAccordion
+                        key={category}
+                        id={`accordion-${category}`}
+                        expandedId={expandedId}
+                        onChange={expandSection}
+                        category={category}
+                        subCategories={subCategories}
+                        onLinkClick={onLinkClick}
+                    />
                 ))}
                 {Object.entries(Config.PRODUCT_NAV_OPTIONS.SINGLE_ENTRIES).map(([category, link]) => (
-                    <NavLink category={category} link = {link} rootCategory={true}/>
+                    <NavLink
+                        key={category}
+                        category={category}
+                        link = {link}
+                        rootCategory={true}
+                        onLinkClick={onLinkClick}
+                    />
                 ))}
             </div>
         </div>

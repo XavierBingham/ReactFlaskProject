@@ -53,13 +53,13 @@ def get_token(user, key, duration, tokenData):
         return False, "Error authenticating"
 
 def get_access_token(user):
-    success, access_token = get_token(user, os.getenv("ACCESS_TOKEN_KEY"), datetime.timedelta(seconds=10), {
+    success, access_token = get_token(user, os.getenv("ACCESS_TOKEN_KEY"), datetime.timedelta(minutes=15), {
         'displayName': user.firstName + " " + user.lastName[0],
     })
     return success, access_token
 
 def get_refresh_token(user):
-    success, refresh_token = get_token(user, os.getenv("REFRESH_TOKEN_KEY"), datetime.timedelta(hours=5), {})
+    success, refresh_token = get_token(user, os.getenv("REFRESH_TOKEN_KEY"), datetime.timedelta(days=30), {})
     if success:
         try:
 
@@ -267,7 +267,7 @@ def login():
     response = authenticate(
         user = existingUser,
         successMessage = "Successfully logged in!",
-        failMessage = "Could not log user in!",
+        failMessage = "Could not authenticate. Please login again.",
         doErrorMessage = True,
     )
     return response

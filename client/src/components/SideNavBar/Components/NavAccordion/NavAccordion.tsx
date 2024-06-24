@@ -2,6 +2,9 @@
 import { Accordion, AccordionProps, AccordionSummary, AccordionDetails, AccordionActions, styled, AccordionSummaryProps, AccordionDetailsProps } from '@mui/material';
 import Typography from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { useContext } from 'react';
+import { DataContext } from '../../../../pages/Core/DataContext';
+import { Link } from 'react-router-dom';
 
 //Components
 const CustomAccordion = styled((props:AccordionProps) => (
@@ -52,19 +55,35 @@ const CustomDetails = styled((props:CustomDetailProps) => (
 }));
 
 //Component
-export function NavLink({category, link, rootCategory=false}:{category:string, link:string, rootCategory?:boolean}) {
+interface NavLinkProps {
+    category:string,
+    link:string,
+    rootCategory?:boolean
+    onLinkClick?:()=>void
+}
+
+export function NavLink({category, link, rootCategory=false, onLinkClick}:NavLinkProps) {
 
     return (
-        <a href={link} className="nav-redirect">
+        <Link to={link} onClick={onLinkClick}>
             <CustomDetails rootCategory={rootCategory}>
                 {category}
             </CustomDetails>
-        </a>
+        </Link>
     )
 
 }
 
-export function NavAccordion({id, expandedId, onChange, category, subCategories}:{id:string, expandedId:string|undefined, onChange:(id:string)=>any, category:string, subCategories:{[subCategory:string]:string}}) {
+interface NavAccordionProps {
+    id:string,
+    expandedId:string|undefined,
+    onChange:(id:string)=>any,
+    category:string,
+    subCategories:{[subCategory:string]:string},
+    onLinkClick?:()=>void,
+}
+
+export function NavAccordion({id, expandedId, onChange, category, subCategories, onLinkClick}:NavAccordionProps) {
 
     return (
         <CustomAccordion expanded={id === expandedId} onChange={onChange(id)}>
@@ -72,7 +91,12 @@ export function NavAccordion({id, expandedId, onChange, category, subCategories}
                 {category}
             </CustomSummary>
             {Object.entries(subCategories).map(([subCategory,redirect]) => (
-                <NavLink category={subCategory} link={redirect}/>
+                <NavLink
+                    key={subCategory}
+                    category={subCategory}
+                    link={redirect}
+                    onLinkClick={onLinkClick}
+                />
             ))}
         </CustomAccordion>
     );

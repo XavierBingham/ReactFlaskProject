@@ -2,6 +2,7 @@
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import Config from "../../../config";
 import { DataWrapper } from "../DataContext";
+import { decode } from "punycode";
 
 //Vars
 interface DataPayload extends JwtPayload {
@@ -22,16 +23,12 @@ export default class AccountManager {
         //Check for valid session
         const token:string|null = localStorage.getItem(Config.ACCESS_TOKEN_KEY);
         if(!token){return;}
-
-        //Check that token hasn't expired
-        const decodedToken:DataPayload = jwtDecode(token);
-        this.session = decodedToken;
+        this.setToken(token);
 
     }
     
     public setModules(modules:DataWrapper): void {
         this.dataModules = modules;
-        modules.endpoint.RunAuthInterceptor();
     }
 
     public checkExpirationValid(): boolean {
@@ -43,8 +40,14 @@ export default class AccountManager {
     }
 
     public setToken(token:string): void {
-        localStorage.setItem(Config.ACCESS_TOKEN_KEY, token);
-        this.session = jwtDecode(token);
+        try {
+            const decodedToken:DataPayload = jwtDecode(token);
+            localStorage.setItem(Config.ACCESS_TOKEN_KEY, token);
+            this.session = decodedToken;
+        }
+        catch {
+            this.clearToken();
+        }
     }
 
     public clearToken(): void {

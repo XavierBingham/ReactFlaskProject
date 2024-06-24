@@ -21,7 +21,7 @@ export default class EndpointManager {
 
     private contentRef:React.RefObject<HTMLDivElement>;
     private dataModules:DataWrapper|undefined;
-    private navigator:(directory:string)=>void;
+    public navigator:(directory:string)=>void;
 
     constructor(contentRef:React.RefObject<HTMLDivElement>, navigator:(directory:string)=>void) {
         this.contentRef = contentRef;
@@ -35,7 +35,6 @@ export default class EndpointManager {
     public PostEndpoint(Props:PostEndpointProps):Promise<any> {
         
         return new Promise((resolve, reject) => {
-            this.RunAuthInterceptor();
             this.RunEndpoint(
                 axios.post,
                 [Props.Url, Props.Data],
@@ -49,7 +48,6 @@ export default class EndpointManager {
     public GetEndpoint(Props:GetEndpointProps):Promise<any> {
         
         return new Promise((resolve, reject) => {
-            this.RunAuthInterceptor();
             this.RunEndpoint(
                 axios.get,
                 [Props.Url],
@@ -68,7 +66,7 @@ export default class EndpointManager {
         } 
     }
 
-    public RunAuthInterceptor() {
+    public Reauthenticate() {
         if(this.dataModules?.session.getSession() !== undefined && !this.dataModules.session.checkExpirationValid()){
             this.GetEndpoint({
                 Url: "/api/account/refresh_access",
@@ -77,10 +75,15 @@ export default class EndpointManager {
                 const AuthToken = res.headers[Config.ACCESS_TOKEN_KEY];
                 this.dataModules?.session.setToken(AuthToken);
             })
+            .catch((err) => {
+                this.dataModules?.session.clearToken();
+            })
         }
     }
 
     private RunEndpoint(RequestType:Axios["get"]|Axios["post"], [Url, PostData]: [string, any?], Resolve:(value:unknown)=>any, Reject:(reason?:any)=>any) {
+        
+        this.Reauthenticate();
         
         try {
             let requestPromise: Promise<any>;

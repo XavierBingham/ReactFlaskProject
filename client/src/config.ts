@@ -4,24 +4,24 @@ const Config = {
     PRODUCT_NAV_OPTIONS: {
         ENTRIES: {
             ["Mens"]: {
-                ["New Arrivals"]: "/",
-                ["T-Shirts & Tops"]: "/",
-                ["Hoodies & Jacket"]: "/",
-                ["Pants & Shorts"]: "/",
-                ["Dresses & Skirts"]: "/",
-                ["Shop All Clothing"]: "/",
+                ["New Arrivals"]: "/products",
+                ["T-Shirts & Tops"]: "/products",
+                ["Hoodies & Jacket"]: "/products",
+                ["Pants & Shorts"]: "/products",
+                ["Dresses & Skirts"]: "/products",
+                ["Shop All Clothing"]: "/products",
             },
             ["Womens"]: {
-                ["New Arrivals"]: "/",
-                ["T-Shirts & Tops"]: "/",
-                ["Hoodies & Jacket"]: "/",
-                ["Pants & Shorts"]: "/",
-                ["Dresses & Skirts"]: "/",
-                ["Shop All Clothing"]: "/",
+                ["New Arrivals"]: "/products",
+                ["T-Shirts & Tops"]: "/products",
+                ["Hoodies & Jacket"]: "/products",
+                ["Pants & Shorts"]: "/products",
+                ["Dresses & Skirts"]: "/products",
+                ["Shop All Clothing"]: "/products",
             },
         },
         SINGLE_ENTRIES: {
-            ["Featured"]: "/",
+            ["Featured"]: "/products",
         },
     }
 }

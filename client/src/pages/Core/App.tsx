@@ -1,32 +1,35 @@
 //Imports
-import {useEffect, useRef, useState} from 'react';
-import { BrowserRouter, NavigateFunction, Route, Routes, useNavigate } from 'react-router-dom';
+import {useEffect, useRef, useState, lazy, Suspense} from 'react';
+import { BrowserRouter, NavigateFunction, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { DataContext, DataWrapper } from './DataContext';
 import AccountManager from './DataModules/AccountManager';
 import { GetCSRF } from '../../api/AccountResolver';
 import CacheManager from './DataModules/CacheManager';
 import LoadManager from './DataModules/LoadManager';
+import EndpointManager from './DataModules/EndpointManager';
 
 //Styles
 import '../../styles/Global.css';
 import '../../styles/GlobalAnimations.css';
 
 //Components
+import FallbackPage from '../../components/FallbackPage/FallbackPage';
 import TopNavBar from '../../components/TopNavBar/TopNavBar';
-import AccountLogin from '../../components/AccountLogin/AccountLogin';
-import ProductSearch from '../../components/ProductSearch/ProductSearch';
-import Cart from '../../components/Cart/Cart';
-import Checkout from '../../components/Checkout/Checkout';
-import AccountCreate from '../../components/AccountCreate/AccountCreate';
-import Account from '../../components/Account/Account';
-import EndpointManager from './DataModules/EndpointManager';
+const AccountLogin = lazy(() => import('../../components/AccountLogin/AccountLogin'));
+const ProductSearch = lazy(() => import('../../components/ProductSearch/ProductSearch'));
+const Cart = lazy(() => import('../../components/Cart/Cart'));
+const Checkout = lazy(() => import('../../components/Checkout/Checkout'));
+const AccountCreate = lazy(() => import('../../components/AccountCreate/AccountCreate'));
+const Account = lazy(() => import('../../components/Account/Account'));
 
 function App() {
 
   const contentRef = useRef<HTMLDivElement>(null);
   const [dataModules, setDataModules] = useState<DataWrapper|null>(null);
   const navigator = useNavigate();
+  const location = useLocation();
 
+  //Initial loading
   useEffect(() => {
 
     const navigatorWrapper = (directory:string) => {
@@ -40,29 +43,46 @@ function App() {
       endpoint: new EndpointManager(contentRef, navigatorWrapper),
     }
 
+    //Load modules into each module
     for(let [_,module] of Object.entries(loadedModules)){
       module.setModules(loadedModules);
     }
+
+    //Load modules + get CSRF session token
     setDataModules(loadedModules);
     GetCSRF(loadedModules);
 
+    //Recheck if current session is valid
+    loadedModules.endpoint.Reauthenticate();
+
   }, [])
+
+  //Listen on route change
+  useEffect(() => {
+    
+    //Recheck if current session is valid
+    dataModules?.endpoint.Reauthenticate();
+
+  }, [location])
   
   return (
     <div ref={contentRef}>
       <DataContext.Provider value={dataModules!}>
           <TopNavBar/>
-          <div id="page-content">
-            <Routes>
-              <Route path="/" element={<ProductSearch/>}/>
-              <Route path="products" element={<ProductSearch/>}/>
-              <Route path="login" element={<AccountLogin/>}/>
-              <Route path="signup" element={<AccountCreate/>}/>
-              <Route path="cart" element={<Cart/>}/>
-              <Route path="account" element={<Account/>}/>
-              <Route path="checkout" element={<Checkout/>}/>
-            </Routes>
-          </div>
+          <Suspense fallback={<></>}>
+            <div id="page-content">
+              <Routes>
+                <Route path="/" element={<ProductSearch/>}/>
+                <Route path="products" element={<ProductSearch/>}/>
+                <Route path="login" element={<AccountLogin/>}/>
+                <Route path="signup" element={<AccountCreate/>}/>
+                <Route path="cart" element={<Cart/>}/>
+                <Route path="account" element={<Account/>}/>
+                <Route path="checkout" element={<Checkout/>}/>
+                <Route path="*" element={<FallbackPage/>}/>
+              </Routes>
+            </div>
+          </Suspense>
       </DataContext.Provider>
     </div>
   );

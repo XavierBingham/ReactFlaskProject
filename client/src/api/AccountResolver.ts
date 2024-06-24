@@ -10,10 +10,9 @@ export async function CreateAccount(DataModules:DataWrapper, Data:FormData):Prom
     })
     .then((res) => {
         const AuthToken = res.headers[Config.ACCESS_TOKEN_KEY];
-        if(!AuthToken){
-            return false;
-        }
+        if(!AuthToken){return false;}
         DataModules.session.setToken(AuthToken);
+        DataModules.endpoint.navigator("/account");
         return true;
     })
     .catch(err => {
@@ -28,7 +27,10 @@ export async function Login(DataModules:DataWrapper, Data:FormData):Promise<any>
     })
     .then((res) => {
         const AuthToken = res.headers[Config.ACCESS_TOKEN_KEY];
-        DataModules.session.setToken(AuthToken);
+        if(AuthToken !== undefined){
+            DataModules.session.setToken(AuthToken);
+            DataModules.endpoint.navigator("/account");
+        }
     })
     .catch(err => {})
 }

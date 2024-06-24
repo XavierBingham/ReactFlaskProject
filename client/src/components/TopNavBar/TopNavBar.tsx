@@ -57,7 +57,7 @@ function TopNavBar() {
                 </Link>
                 <TopBarControls/>
             </div>
-            <SideNavBar ref={sideNavBarRef} enabled={sideNavOpen} />
+            <SideNavBar ref={sideNavBarRef} enabled={sideNavOpen} onLinkClick={toggleSideNav}/>
         </div>
     )
 

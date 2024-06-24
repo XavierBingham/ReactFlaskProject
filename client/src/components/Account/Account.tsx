@@ -8,7 +8,7 @@ import './Account.css'
 
 //Component
 export default function Account() {
-
+    
     //State
     const dataModules = useContext(DataContext);
 
