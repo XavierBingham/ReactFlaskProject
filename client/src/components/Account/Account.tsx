@@ -8,11 +8,9 @@ import './Account.css'
 
 //Component
 export default function Account() {
-    
-    //State
-    const dataModules = useContext(DataContext);
 
     //Vars
+    const dataModules = useContext(DataContext);
     const userSession = dataModules?.session.getSession();
     const navigate = useNavigate();
 
@@ -27,7 +25,7 @@ export default function Account() {
         <>
             {userSession === undefined ? (<></>) :
             (<div>
-                My Account
+                My Account - {userSession.displayName}
             </div>)}
         </>
     );

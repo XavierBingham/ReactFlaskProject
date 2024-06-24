@@ -1,3 +1,6 @@
+//Imports
+import ProductSlot from './Components/ProductSlot';
+
 //Styles
 import './ProductSearch.css'
 
@@ -6,7 +9,12 @@ export default function ProductSearch() {
 
     return (
         <div>
-            Product Search
+            <ul>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+            </ul>
         </div>
     );
 
