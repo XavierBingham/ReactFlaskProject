@@ -23,7 +23,7 @@ class Server():
         DatabaseController.Init(self.App)
         RouterController.Init(self.App)
         print("Server Successfully Started.")
-        self.App.run(debug=True)
+        self.App.run(debug=True, host="0.0.0.0", port=5000)
 
 #Methods
 def Init():
