@@ -4,6 +4,7 @@ import json
 from routerController import RouterController
 from databaseController import DatabaseController
 import datetime
+from flask_cors import CORS
 
 #Vars
 Config = None
@@ -20,6 +21,8 @@ class Server():
 
         print("Starting Server...")
         self.App = Flask(__name__)
+        CORS(self.App)
+        
         DatabaseController.Init(self.App)
         RouterController.Init(self.App)
         print("Server Successfully Started.")
