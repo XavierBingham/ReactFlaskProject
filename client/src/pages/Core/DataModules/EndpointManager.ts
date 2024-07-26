@@ -88,9 +88,9 @@ export default class EndpointManager {
         try {
             let requestPromise: Promise<any>;
             if((RequestType === axios.get)) {
-                requestPromise = axios.get(Url, this.GetConfig());
+                requestPromise = axios.get(Config.API_ENDPOINT + Url, this.GetConfig());
             } else {
-                requestPromise = axios.post(Url, PostData, this.GetConfig());
+                requestPromise = axios.post(Config.API_ENDPOINT + Url, PostData, this.GetConfig());
             }
 
             requestPromise
