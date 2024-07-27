@@ -8,36 +8,31 @@ from flask_cors import CORS
 
 #Vars
 Config = None
-ActiveServer = None
-
-#Classes
-class Server():
-
-    #Fields
-    App = None
-
-    #Methods
-    def __init__(self):
-
-        print("Starting Server...")
-        self.App = Flask(__name__)
-        CORS(self.App)
-        
-        DatabaseController.Init(self.App)
-        RouterController.Init(self.App)
-        print("Server Successfully Started.")
-        self.App.run(debug=True, host="0.0.0.0", port=5000)
 
 #Methods
-def Init():
+def CreateApp():
     
     #Load config
+    global Config
     with open("./config.json") as config:
         Config = json.load(config)
     
     #Load server
-    ActiveServer = Server()
+    print("Starting Server...")
+    App = Flask(__name__)
+    CORS(App)
+    
+    DatabaseController.Init(App)
+    RouterController.Init(App)
+    print("Server Successfully Started.")
+
+    return App
 
 #Init
+App = CreateApp()
 if __name__ == "__main__":
-    Init()
+    App.run(
+        debug=True,
+        host="0.0.0.0",
+        port = 80,
+    )
