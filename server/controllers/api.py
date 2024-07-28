@@ -7,9 +7,9 @@ def test():
     }), 200
 
 def get_csrf_token():
+    csrf_token = csrf.generate_csrf()
     response = jsonify({
         "message":"Successfully generated CSRF token",
+        "token":csrf_token
     })
-    csrf_token = csrf.generate_csrf()
-    response.headers.set("X-CSRFToken", csrf_token)
     return response, 200

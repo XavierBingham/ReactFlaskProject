@@ -40,7 +40,7 @@ export async function GetCSRF(DataModules:DataWrapper):Promise<any> {
         Url: "/api/get_csrf_token",
     })
     .then((res) => {
-        const CSRFToken = res.headers["X-Csrftoken"];
+        const CSRFToken = res.data["token"];
         sessionStorage.setItem("csrf_token", CSRFToken);
     })
     .catch(err => {})
