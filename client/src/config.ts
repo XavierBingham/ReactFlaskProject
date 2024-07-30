@@ -1,5 +1,5 @@
 const Config = {
-    API_ENDPOINT: "https://api.xavierprojects.com",
+    API_ENDPOINT: "http://localhost:5008",//"https://api.xavierprojects.com",
     ACCESS_TOKEN_KEY: "access_token",
     APP_NAME: "Generic Brand",
     PRODUCT_NAV_OPTIONS: {

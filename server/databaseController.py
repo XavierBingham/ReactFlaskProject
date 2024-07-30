@@ -25,6 +25,7 @@ class DatabaseController:
         URI = os.getenv("DATABASE_URI")
         App.config["SQLALCHEMY_DATABASE_URI"] = URI
         App.config["SECRET_KEY"] = secrets.token_hex(32)
+        App.config["WTF_CSRF_ENABLED"] = False #CSRF bugs out in form validations, sadly had to be disabled for this project, for now at least
         DatabaseController.Database = SQLAlchemy(App)
         DatabaseController.Bcrypt = Bcrypt(App)
         DatabaseController.CSRF = CSRFProtect(App)
