@@ -1,13 +1,11 @@
 from wtforms import StringField, PasswordField, validators
 from wtforms.validators import DataRequired, Email, Length
 from flask_wtf import FlaskForm
-from flask import jsonify, request
+from flask import jsonify, request, current_app as App
 from databaseController import DatabaseController
 import jwt
 import datetime
-from flask import current_app as app
 import os
-import psycopg2
 from sqlalchemy.exc import IntegrityError
 
 #Vars
@@ -32,6 +30,8 @@ passwordValidator = PasswordField(
 
 #Session management
 def get_token(user, key, duration, tokenData):
+
+    App.logger.info(f"Assigning token {key} for duration {duration}")
     currentTime = datetime.datetime.now(datetime.timezone.utc)
     try:
         tokenData['sub'] = user.user_id
@@ -39,7 +39,7 @@ def get_token(user, key, duration, tokenData):
         tokenData['exp'] = currentTime + duration
         token = jwt.encode(
             tokenData,
-            key=app.config["SECRET_KEY"],
+            key=App.config["SECRET_KEY"],
             algorithm='HS256',
         )
         return True, {
@@ -49,20 +49,23 @@ def get_token(user, key, duration, tokenData):
             "exp": currentTime + duration,
         }
     except Exception as e:
-        print("Token couldn't be assigned", key, e)
+        App.logger.error(f"Could not assign token {key}; Exception: {e}")
         return False, "Error authenticating"
 
 def get_access_token(user):
+    App.logger.info("Retrieving new access token")
     success, access_token = get_token(user, os.getenv("ACCESS_TOKEN_KEY"), datetime.timedelta(minutes=15), {
         'displayName': user.firstName + " " + user.lastName[0],
     })
     return success, access_token
 
 def get_refresh_token(user):
+    App.logger.info("Retrieving new refresh token")
     success, refresh_token = get_token(user, os.getenv("REFRESH_TOKEN_KEY"), datetime.timedelta(days=30), {})
     if success:
         try:
 
+            App.logger.info("Saving Refresh Token to database")
             refreshTokensModel = DatabaseController.Models.get("RefreshToken")
 
             #Attempt saving refresh token to database
@@ -79,12 +82,13 @@ def get_refresh_token(user):
             db.session.commit()
             
         except Exception as e:
-            print("Refresh token could not be saved", e)
+            App.logger.error(f"Could not save Refesh Token to database; Exception: {e}")
             return False, "Refresh token could not be saved"
 
     return success, refresh_token
 
 def apply_token(response, key, tokenData):
+    App.logger.info(f"Applying token {key}")
     response.set_cookie(
             key,
             tokenData["value"],
@@ -94,6 +98,9 @@ def apply_token(response, key, tokenData):
         )
 
 def authenticate(user, successMessage, failMessage, doErrorMessage):
+
+    App.logger.info(f"Authenticating session for user`{user}`")
+
     #Create authenticated session
     refresh_auth_success, refresh_data = get_refresh_token(user)
     access_auth_success, access_data = None, None
@@ -107,6 +114,7 @@ def authenticate(user, successMessage, failMessage, doErrorMessage):
         apply_token(response, os.getenv("ACCESS_TOKEN_KEY"), access_data)
         apply_token(response, os.getenv("REFRESH_TOKEN_KEY"), refresh_data)
         response.headers.set(os.getenv("ACCESS_TOKEN_KEY"), access_data["value"])
+        App.logger.info("Session successfully authenticated")
     else:
         #If tokens could not be applied, request a redirect to the login page
         if doErrorMessage:
@@ -122,11 +130,15 @@ def authenticate(user, successMessage, failMessage, doErrorMessage):
         #Apply refresh token if that was successfully made
         if refresh_auth_success:
             apply_token(response, os.getenv("REFRESH_TOKEN_KEY"), refresh_data)
+            App.logger.error("Session could not be authenticated; new refresh token applied")
+        else:
+            App.logger.error("Session could not be authenticated")
 
     return response
 
 #Index
 def index():
+    App.logger.info("CALL - Account Index")
     return jsonify({
         "data": "yes",
     }), 200
@@ -134,6 +146,8 @@ def index():
 #Access token refreshing
 def refresh_access():
     
+    App.logger.info("Refreshing access token")
+
     refresh_token = request.cookies.get(os.getenv("REFRESH_TOKEN_KEY"))
     user = None
 
@@ -142,7 +156,7 @@ def refresh_access():
         #Retrieve user
         decoded_refresh_token = jwt.decode(
             refresh_token,
-            key=app.config["SECRET_KEY"],
+            key=App.config["SECRET_KEY"],
             algorithms=['HS256'],
         )
         
@@ -153,6 +167,7 @@ def refresh_access():
             raise Exception("User does not exist any longer, user_id: " + decoded_refresh_token.sub)
 
     except Exception as e:
+        App.logger.error(f"Could not refresh access token: {e}")
         return jsonify({
             "error": "Could not authenticate. Please login again.",
             "redirect": "/login",
@@ -176,13 +191,16 @@ class CreateAccountForm(FlaskForm):
 
 def create():
     
+    App.logger.info("CALL - Create Account")
+
     #Get + verify form data
     form = CreateAccountForm(request.form)
     
     if not form.validate_on_submit():
+        App.logger.error("Create account validation unsuccessful:")
         for field, errors in form.errors.items():
             for error in errors:
-                print(f"Validation error in field '{field}': {error}")
+                App.logger.error(f"Validation error in field '{field}': {error}")
         return jsonify({
             "error": "Invalid form data"
         }), 400
@@ -203,19 +221,19 @@ def create():
     
     #Add to database
     try:
-        
+        App.logger.info("Saving user to database")
         db = DatabaseController.Database
         db.session.add(user)
         db.session.commit()
         
     except IntegrityError as e:
-        print("Account couldn't be created 1:", e)
+        App.logger.error(f"Account could not be created; IntegrityError: {e}")
         return jsonify({
             "error": "Email is already in use."
         }), 409
     
     except Exception as e:
-        print("Account couldn't be created 2:", e)
+        App.logger.error(f"Account could not be created; Exception: {e}")
         return jsonify({
             "error": "Account could not be created, please try again."
         }), 500
@@ -236,13 +254,16 @@ class LoginAccountForm(FlaskForm):
 
 def login():
 
+    App.logger.info("CALL - Login to Account")
+
     #Get + verify form data
     form = LoginAccountForm(request.form)
     
     if not form.validate_on_submit():
+        App.logger.error("Login validation unsuccessful:")
         for field, errors in form.errors.items():
             for error in errors:
-                print(f"Validation error in field '{field}': {error}")
+                App.logger.error(f"Login validation error in field '{field}': {error}")
         return jsonify({
             "error": "Invalid form data"
         }), 400
@@ -252,6 +273,7 @@ def login():
     existingUser = usersModel.query.filter_by(email=form.email.data).first()
 
     if existingUser == None:
+        App.logger.error(f"Account does not exist with email '{form.email.data}'")
         response = jsonify({"error":"Username or password is incorrect"})
         return response, 401
 
@@ -260,6 +282,7 @@ def login():
     validPassword = bcrypt.check_password_hash(existingUser.password, form.password.data)
 
     if not validPassword:
+        App.logger.error(f"Password does not match")
         response = jsonify({"error":"Username or password is incorrect"})
         return response, 401
 

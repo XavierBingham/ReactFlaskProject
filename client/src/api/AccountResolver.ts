@@ -3,7 +3,12 @@ import Config from "../config";
 import { DataWrapper } from "../pages/Core/DataContext";
 
 //Methods
+const ApplyMetadata = (Data:FormData) => {
+    Data.set("csrf_token", sessionStorage.getItem("csrf_token") as string);
+}
+
 export async function CreateAccount(DataModules:DataWrapper, Data:FormData):Promise<any> {
+    ApplyMetadata(Data);
     return DataModules.endpoint.PostEndpoint({
         Url: "/api/account/create",
         Data: Data,
@@ -21,6 +26,7 @@ export async function CreateAccount(DataModules:DataWrapper, Data:FormData):Prom
 }
 
 export async function Login(DataModules:DataWrapper, Data:FormData):Promise<any> {
+    ApplyMetadata(Data);
     return DataModules.endpoint.PostEndpoint({
         Url: "/api/account/login",
         Data: Data,

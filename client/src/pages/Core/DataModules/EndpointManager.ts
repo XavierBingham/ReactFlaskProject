@@ -59,11 +59,7 @@ export default class EndpointManager {
     }
 
     private GetConfig():any {
-        return {
-            headers: {
-                "X-CSRFToken": sessionStorage.getItem("csrf_token"),
-            }
-        } 
+        return {}
     }
 
     public Reauthenticate() {
