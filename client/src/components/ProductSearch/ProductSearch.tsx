@@ -9,7 +9,23 @@ export default function ProductSearch() {
 
     return (
         <div>
-            <ul>
+            <ul id="product-list">
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
+                <ProductSlot></ProductSlot>
                 <ProductSlot></ProductSlot>
                 <ProductSlot></ProductSlot>
                 <ProductSlot></ProductSlot>

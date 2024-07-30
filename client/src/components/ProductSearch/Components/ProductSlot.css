@@ -1,0 +1,32 @@
+.product-slot {
+    width: fit-content;
+    height: fit-content;
+}
+
+.image-background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 300px;
+    background-color: rgb(247, 247, 247);
+}
+
+.product-slot img {
+    width: 200px;
+    height: 200px;
+}
+
+.product-info {
+    width: 200px;
+    padding-top: 10px;
+}
+
+.product-info * {
+    color: var(--main-color);
+    line-height: 4px;
+}
+
+.product-title {
+    font-weight: bold;
+}
