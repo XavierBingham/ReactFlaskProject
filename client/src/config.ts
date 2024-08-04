@@ -9,7 +9,6 @@ const Config = {
                 ["T-Shirts & Tops"]: "/products",
                 ["Hoodies & Jacket"]: "/products",
                 ["Pants & Shorts"]: "/products",
-                ["Dresses & Skirts"]: "/products",
                 ["Shop All Clothing"]: "/products",
             },
             ["Womens"]: {

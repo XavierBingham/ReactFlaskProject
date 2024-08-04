@@ -1,44 +1,37 @@
-//Icons
+//Imports
+import { useContext, useRef, useState } from 'react';
 import { Person, ShoppingCart } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+import { DataContext } from '../../../../pages/Core/DataContext';
 
 //Components
 import ControlButton from '../ControlButton/ControlButton';
-import ManageDropdown from '../ManageDropdown/ManageDropdown';
 
 //Styles
 import './TopBarControls.css'
-import { useRef, useState } from 'react';
-import { MenuItem } from '@mui/material';
-import { Link } from 'react-router-dom';
 
 //Component
 function LoggedInControls() {
 
-    //State
-    const [manageMenuOpen, setManageMenuOpen] = useState<boolean>(false);
-    const profileButtonRef = useRef<HTMLButtonElement>(null);
-
-    //Methods
-    const toggleManageMenu = () => {
-        setManageMenuOpen((state) => !state);
-    };
+    const dataModules = useContext(DataContext)!;
+    const userSession = dataModules?.session.getSession();
 
     //Component
     return <div id="logged-in-controls" className="account-controls">
-
-        <ControlButton
-            id="cart-button"
-            title="My Cart"
-        >
-            <ShoppingCart/>
-        </ControlButton>
         
-        <Link to="/account">
+        <Link to="/cart">
+            <ControlButton
+                id="cart-button"
+                title="My Cart"
+            >
+                <ShoppingCart/>
+            </ControlButton>
+        </Link>
+
+        <Link to={userSession !== undefined ? "/account" : "/login"}>
             <ControlButton
                 id="profile-button"
                 title="Account"
-                handleClick={toggleManageMenu}
-                ref={profileButtonRef}
             >
                 <Person/>
             </ControlButton>
